@@ -1,0 +1,62 @@
+<!DOCTYPE>
+<html>
+<head>
+    <title>{% block title %} IPCMS {% endblock %}</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-bottom: 20px;
+            padding-top: 70px;
+        }
+        .messages {
+            list-style: none;
+        }
+
+        .auth {
+            font-size: 15px;
+            color: white;
+            text-decoration: none;
+        }
+
+        h1.warning {
+
+            font-size: 20px;
+            color: red;
+        }
+
+    </style>
+    {% block css %}{% endblock css %}
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Interactive Patient Care Management System</a>
+        {% if user.is_active %}
+        <a href="/logout">LOGOUT</a>
+
+        {% elif not user.is_active %}
+         <a href="/accounts/login" class = "auth">LOGIN                   -</a>
+         <a href="/accounts/register" class = "auth">REGISTER</a>
+        {% endif %}
+        </div>
+        <div class="navbar-collapse collapse">
+        </div><!--/.navbar-collapse -->
+      </div>
+    </div>
+    <div class="jumbotron">
+        <div class="container"> <p><h1>{% block headline %}{% endblock headline %}</h1></p></div>
+    </div>
+    <div class="container">
+        {% block content %}{% endblock content %}
+    </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    {% block js %}{% endblock js %}
+</body>
+</html>
