@@ -1,7 +1,26 @@
 {% extends '_layouts/base.html' %}
 
-{% block headline %}User Control Panel{% endblock %}
+{% if user.is_authenticated %}
+	{% block headline %}Schedule Appointment{% endblock %}
+{% endif %}
 
 {% block content %}
+	{% if roles.role == "admin" %}
+	HELLO YOU ARE ADMIN
+
+		<br><br>
+		<b>Username Is: {{ user.username }}
+
+	    <li>role is: {{ roles.role }}</li>
+
+	{% else %}
+	NOT ADMIN
+	<br><br>
+	<b>Username Is: {{ user.username }}
+
+    <li>role is: {{ roles.role }}</li>
+	
+	{% endif %}
 
 {% endblock %}
+
