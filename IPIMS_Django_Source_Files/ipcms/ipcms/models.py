@@ -37,7 +37,21 @@ class PatientAppt(models.Model):
 	doctor = models.ForeignKey(Doctor, unique=False, blank=True, default="")
 	pain_level = models.IntegerField(validators=[MinValueValidator(0),
                                        MaxValueValidator(10)], default=0)
+	medical_conditions = models.CharField(max_length=1000, default="None")
+	allergies = models.CharField(max_length=1000, default="None")
 	user = models.ForeignKey(Patient, unique=False, blank=True, default="")
+	nausea_level = models.IntegerField(validators=[MinValueValidator(0),
+                                       MaxValueValidator(10)], default=0)
+	hunger_level = models.IntegerField(validators=[MinValueValidator(0),
+                                       MaxValueValidator(10)], default=0)
+	anxiety_level = models.IntegerField(validators=[MinValueValidator(0),
+                                       MaxValueValidator(10)], default=0)
+	stomach_level = models.IntegerField(validators=[MinValueValidator(0),
+                                       MaxValueValidator(10)], default=0)
+	body_ache_level = models.IntegerField(validators=[MinValueValidator(0),
+                                       MaxValueValidator(10)], default=0)
+	chest_pain_level = models.IntegerField(validators=[MinValueValidator(0),
+                                       MaxValueValidator(10)], default=0)
 
 	def __unicode__(self):
 		return str(self.doctor)
