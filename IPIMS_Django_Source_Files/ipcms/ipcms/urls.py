@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^schedule/$', ScheduleView, name="Schedule"),
     url(r'tester$', CreatePatientView.as_view(), name="FormTest"),
+    url(r'dataform/$', PatientDataView.as_view(), name="PatientInfo"),
 ]

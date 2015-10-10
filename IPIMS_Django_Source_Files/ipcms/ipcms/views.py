@@ -2,13 +2,13 @@ from __future__ import absolute_import
 from django.views import generic
 from django.template import loader, Context
 from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth.models import User 
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse_lazy
-from .forms import RegistrationForm, LoginForm, PatientForm
+from .forms import RegistrationForm, LoginForm, PatientForm,PatientDataForm
 from django.template import RequestContext
 from django.views.generic import ListView
-from .models import PermissionsRole, Patient
+from .models import PermissionsRole, Patient,PatientData
 from django.shortcuts import render_to_response
 from .forms import PatientApptForm
 from django.template import RequestContext
@@ -81,7 +81,7 @@ Sign up view used to register a user into the system
 class SignUpView(generic.CreateView):
 
 	form_class = RegistrationForm
-	model = User 
+	model = User
 	template_name = 'accounts/signup.html'
 	success_url = reverse_lazy('Success')
 
@@ -110,6 +110,7 @@ class LoginView(generic.FormView):
 View that is responsible for rendering the patient scheduling system for the user
 '''
 
+<<<<<<< Updated upstream
 def ScheduleView(request):
 
 	title = "Appointment Schedule"
@@ -127,6 +128,15 @@ def ScheduleView(request):
 		"template_title": title
 	}
 	return render(request, 'accounts/schedule.html', context)
+=======
+		if request.method == "POST":
+			print (request.POST)
+			form = PatientApptForm(request.POST)
+			if form.is_valid():
+				appt = form.save(user = request.user)
+				form.save()
+		return render_to_response('accounts/schedule.html', {'permissionModel': permissionModel, 'user': request.user, 'roles': permissionRoleForUser.role, 'form': form}, context_instance=RequestContext(request))
+>>>>>>> Stashed changes
 
 '''
 View that forces request object to log out of the system
@@ -142,6 +152,9 @@ class CreatePatientView(generic.CreateView):
 	template_name = 'accounts/controlpanel.html'
 	form_class = PatientForm
 	success_url = reverse_lazy("FormTest")
-
-
-
+class PatientDataView(generic.FormView):
+	model = PatientData
+	template_name = '#'
+	form_class = PatientDataForm
+	success_url = reverse_lazy("FormTest")
+	template_name = 'accounts/dataform.html'

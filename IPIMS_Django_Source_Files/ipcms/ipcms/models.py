@@ -10,8 +10,8 @@ class Doctor(models.Model):
 	# doctor_name = models.CharField(max_length=256, choices=[('Dr. Schachte', 'Dr. Schachte'), ('Dr. Schachte', 'Dr. Huffy')], default="DEFAULT")
 	doctor_first_name = models.CharField(max_length=256, default="")
 	doctor_last_name = models.CharField(max_length=256, default="")
-	doctor_type = models.CharField(max_length=256, choices=[('Gynecologist', 'Gynecologist'), ('Neuro', 'Neuro')], default="Select Doctor Type") 
-	
+	doctor_type = models.CharField(max_length=256, choices=[('Gynecologist', 'Gynecologist'), ('Neuro', 'Neuro')], default="Select Doctor Type")
+
 	def __unicode__(self):
 		return "Dr. " + str(self.doctor_last_name)
 
@@ -57,7 +57,13 @@ class PatientAppt(models.Model):
 	def __unicode__(self):
 		return str(self.doctor)
 
+class PatientData(models.Model):
+	phone_number = PhoneNumberField(blank = True)
+	ssn = models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(10)], default=0)
+	allergies = models.CharField(max_length=256, default="")
+	medications = models.CharField(max_length=256, default="")
 
+	def __unicode__(self):
+		return str(self.user)
 #Create a class that will send the patients data into the system for the HSP staff to approve
 # class PatientPendingApproval(models.Model):
-	
