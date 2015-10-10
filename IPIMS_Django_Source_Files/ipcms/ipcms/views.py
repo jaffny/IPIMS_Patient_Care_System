@@ -122,6 +122,7 @@ def ScheduleView(request):
 		instance.patient = patient
 		instance.user = patient
 		instance.save()
+		return HttpResponseRedirect('success/')
 	context = {
 		"form": form,
 		"template_title": title

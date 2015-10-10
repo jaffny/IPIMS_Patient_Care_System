@@ -16,11 +16,12 @@
 
 {% if user.is_authenticated %}
 
-<form method ='POST' action=''>
-	{% csrf_token %}
-	{{ form|crispy }}
-	<input type="submit" value="Schedule"/>
-</form>
-
+ <div class="col-sm-6">
+	<form method ='POST' action=''>
+		{% csrf_token %}
+		{{ form|crispy }}
+		<input type="submit" value="Schedule" class="btn default"/>
+	</form>
+</div>
 {% endif %}
 {% endblock %}
