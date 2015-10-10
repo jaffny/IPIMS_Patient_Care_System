@@ -1,36 +1,32 @@
 {% extends '_layouts/base.html' %}
 
-	{% block headline %}
+{% block headline %}
 
-{% if roles == "patient" %}
-	Schedule Appointment
+	{% if authenticated == False %}
+		You are not logged in!
+	{% endif %}
 
-	{% else %}
+	{% if approval == 0 and not roles.role == "admin" and authenticated == True %}
 
-	Only Patients Have Access
-{% endif %}
-	{% endblock %}
+		You're Not Approved
+
+	{% elif roles.role == "admin" %}
+
+		Welcome To The Administrative Backend
+
+	{% endif %}
+
+{% endblock %}
 
 
 {% block content %}
-{% if roles == "patient" %}
 
-Welcome Patient <br>{{ user.username }}
 
-{% else %}
+	{% if not approval == 0 %}
+		You're approved!
+	{% endif %}
 
-Only Patients Have Access
-
-<form action="{{ action }}" method="POST">
-  {% csrf_token %}
-  <ul>
-    {{ form.as_ul }}
-  </ul>
-  <input type="submit" value="Save" />
-</form>
-
-{% endif %}
-
+	{{ user.username }}
 
 {% endblock %}
 

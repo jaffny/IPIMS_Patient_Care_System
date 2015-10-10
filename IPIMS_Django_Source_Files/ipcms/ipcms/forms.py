@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
-from .models import Patient
+from .models import Patient, PatientAppt
 from django.db import models
 from django import forms
 
@@ -10,7 +10,7 @@ from django import forms
 class RegistrationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
-
+        self.fields['username'].label = "Patient Email"
         self.helper = FormHelper()
         self.helper.layout = Layout(
             'username',
@@ -27,7 +27,7 @@ class LoginForm(AuthenticationForm):
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            'email',
+            'username',
             'password',
             ButtonHolder(
                 Submit('login', 'Login', css_class='btn-primary')
@@ -39,4 +39,10 @@ class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
         fields = ['phone_number', 'email_address', 'user']
-        # fields['user'].choices = [(1, '1')]
+
+
+class PatientApptForm(forms.ModelForm):
+    class Meta:
+        model = PatientAppt
+        fields = '__all__'
+        # exclude = ['user']

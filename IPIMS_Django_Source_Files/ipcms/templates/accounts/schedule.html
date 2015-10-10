@@ -1,0 +1,28 @@
+
+<!-- Will load the base html template to lessen the repeated code on each page. -->
+
+
+
+{% extends '_layouts/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block headline %}Appointment Schedule<br>{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+	
+	Please Fill In The Appointment Scheduling Information
+
+
+<form method ='POST' action=''>
+	{% csrf_token %}
+	{{ form|crispy }}
+
+	<input type="submit" value="Schedule"/>
+</form>
+
+{% endif %}
+{% endblock %}

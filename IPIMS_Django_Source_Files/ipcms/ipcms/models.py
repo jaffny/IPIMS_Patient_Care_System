@@ -5,7 +5,6 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
-#This class will define all the permissions for the doc
 #This class will also contain the list of names of the doctors who work for the hospital
 class Doctor(models.Model):
 	# doctor_name = models.CharField(max_length=256, choices=[('Dr. Schachte', 'Dr. Schachte'), ('Dr. Schachte', 'Dr. Huffy')], default="DEFAULT")
@@ -59,3 +58,6 @@ class PatientAppt(models.Model):
 		return str(self.doctor)
 
 
+#Create a class that will send the patients data into the system for the HSP staff to approve
+# class PatientPendingApproval(models.Model):
+	
