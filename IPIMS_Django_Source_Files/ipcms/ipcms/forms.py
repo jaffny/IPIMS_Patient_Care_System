@@ -45,4 +45,4 @@ class PatientApptForm(forms.ModelForm):
     class Meta:
         model = PatientAppt
         fields = '__all__'
-        # exclude = ['user']
+        exclude = ['user']

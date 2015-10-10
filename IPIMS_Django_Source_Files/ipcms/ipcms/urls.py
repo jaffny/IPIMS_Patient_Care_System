@@ -24,6 +24,6 @@ urlpatterns = [
     url(r'accounts/login/$', LoginView.as_view(), name="Login"),
     url(r'logout/$', logout_user, name="Logout"),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^schedule/$', ScheduleView.as_view(), name="Schedule"),
+    url(r'^schedule/$', ScheduleView, name="Schedule"),
     url(r'tester$', CreatePatientView.as_view(), name="FormTest"),
 ]

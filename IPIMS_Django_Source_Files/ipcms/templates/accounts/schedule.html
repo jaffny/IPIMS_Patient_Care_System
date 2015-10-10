@@ -7,20 +7,19 @@
 
 {% load crispy_forms_tags %}
 
+
+
+
 {% block headline %}Appointment Schedule<br>{% endblock %}
 
 {% block content %}
 
 {% if user.is_authenticated %}
 
-	
-	Please Fill In The Appointment Scheduling Information
-
 
 <form method ='POST' action=''>
 	{% csrf_token %}
 	{{ form|crispy }}
-
 	<input type="submit" value="Schedule"/>
 </form>
 

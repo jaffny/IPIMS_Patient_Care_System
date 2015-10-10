@@ -12,17 +12,9 @@ from .models import PermissionsRole, Patient
 from django.shortcuts import render_to_response
 from .forms import PatientApptForm
 from django.template import RequestContext
+from django.shortcuts import render
 
 STAFF_APPROVAL_ROLES = ('admin', 'doctor', 'staff', 'nurse', 'lab')
-
-
-def is_authenticated():
-
-	def get(self, request):
-		if (self.request.user.is_authenticated):
-			return True
-		else:
-			return False
 
 '''
 Homepage to display the main control panel or HomePage based on user authentication
@@ -117,28 +109,24 @@ class LoginView(generic.FormView):
 '''
 View that is responsible for rendering the patient scheduling system for the user
 '''
-class ScheduleView(generic.TemplateView):
-	#Return the current permissions of the authenticated user
-	def get(self, request):
-		permissionModel = PermissionsRole
-		context_object_name = 'permissionModel'
 
-		form = PatientApptForm(request.POST or None)
+def ScheduleView(request):
 
-		if request.user.is_authenticated():
-			if permissionModel.objects.filter(user__username=request.user.username)[:1].exists():
-				permissionRoleForUser = permissionModel.objects.filter(user__username=request.user.username)[:1].get()
-		else:
-			HttpResponse("fail")
+	title = "Appointment Schedule"
+	form = PatientApptForm(request.POST or None)
 
-
-		if request.method == "POST":
-			print request.POST
-			form = PatientApptForm(request.POST)
-			if form.is_valid():
-				appt = form.save(user = request.user)
-				form.save()
-		return render_to_response('accounts/schedule.html', {'permissionModel': permissionModel, 'user': request.user, 'roles': permissionRoleForUser.role, 'form': form}, context_instance=RequestContext(request))
+	patient_model = Patient
+	if form.is_valid():
+		instance = form.save(commit=False)
+		patient = patient_model.objects.filter(user__username=request.user.username)[:1].get()
+		instance.patient = patient
+		instance.user = patient
+		instance.save()
+	context = {
+		"form": form,
+		"template_title": title
+	}
+	return render(request, 'accounts/schedule.html', context)
 
 '''
 View that forces request object to log out of the system
