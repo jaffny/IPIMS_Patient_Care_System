@@ -57,7 +57,7 @@ class PatientAppt(models.Model):
 	def __unicode__(self):
 		return str(self.doctor)
 
-class PatientData(models.Model):
+class TempPatientData(models.Model):
 	phone_number = PhoneNumberField(blank = True)
 	ssn = models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(10)], default=0)
 	allergies = models.CharField(max_length=256, default="")

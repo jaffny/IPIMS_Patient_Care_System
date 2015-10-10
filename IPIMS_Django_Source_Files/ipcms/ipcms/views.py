@@ -110,7 +110,7 @@ class LoginView(generic.FormView):
 View that is responsible for rendering the patient scheduling system for the user
 '''
 
-<<<<<<< Updated upstream
+
 def ScheduleView(request):
 
 	title = "Appointment Schedule"
@@ -128,15 +128,13 @@ def ScheduleView(request):
 		"template_title": title
 	}
 	return render(request, 'accounts/schedule.html', context)
-=======
-		if request.method == "POST":
-			print (request.POST)
-			form = PatientApptForm(request.POST)
-			if form.is_valid():
-				appt = form.save(user = request.user)
-				form.save()
-		return render_to_response('accounts/schedule.html', {'permissionModel': permissionModel, 'user': request.user, 'roles': permissionRoleForUser.role, 'form': form}, context_instance=RequestContext(request))
->>>>>>> Stashed changes
+	       if request.method == "POST":
+			  print (request.POST)
+			  form = PatientApptForm(request.POST)
+			  if form.is_valid():
+				 appt = form.save(user = request.user)
+				 form.save()
+		   		 return render_to_response('accounts/schedule.html', {'permissionModel': permissionModel, 'user': request.user, 'roles': permissionRoleForUser.role, 'form': form}, context_instance=RequestContext(request))
 
 '''
 View that forces request object to log out of the system

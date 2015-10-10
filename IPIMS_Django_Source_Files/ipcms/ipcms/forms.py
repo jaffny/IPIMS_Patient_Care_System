@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
-from .models import Patient, PatientAppt, PatientData
+from .models import Patient, PatientAppt, TempPatientData
 from django.db import models
 from django import forms
 
@@ -51,5 +51,5 @@ class PatientApptForm(forms.ModelForm):
 class PatientDataForm(forms.ModelForm):
     #user = forms.Charfield(max_length = 40)
     class Meta:
-        model = PatientData
+        model = TempPatientData
         fields= ('ssn','allergies','medications')
