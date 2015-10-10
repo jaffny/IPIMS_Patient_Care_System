@@ -35,7 +35,7 @@ class Patient(models.Model):
 #Class for the patients to schedule appointments for their associated doctor
 class PatientAppt(models.Model):
 	date = models.DateTimeField(auto_now=False, auto_now_add=False, unique=True)
-	doctor = models.ForeignKey(Doctor, unique=False, blank=True, default="")
+	doctor = models.ForeignKey(Doctor, unique=False, blank=False, default="Select A Doctor..")
 	pain_level = models.IntegerField(validators=[MinValueValidator(0),
                                        MaxValueValidator(10)], default=0)
 	medical_conditions = models.CharField(max_length=1000, default="None")
@@ -60,4 +60,4 @@ class PatientAppt(models.Model):
 
 #Create a class that will send the patients data into the system for the HSP staff to approve
 # class PatientPendingApproval(models.Model):
-	
+
