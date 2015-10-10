@@ -4,6 +4,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+
 #This class will define all the permissions for the doc
 #This class will also contain the list of names of the doctors who work for the hospital
 class Doctor(models.Model):
@@ -26,7 +27,8 @@ class PermissionsRole(models.Model):
 class Patient(models.Model):
 	phone_number = PhoneNumberField(blank = True)
 	email_address = models.EmailField(blank = True, max_length=254)
-	user = models.OneToOneField(User, unique=True,  blank=True, default="")
+	user = models.OneToOneField(User, unique=True,  blank=True, default="", null=True)
+	approved = models.IntegerField(default=0, null=False)
 
 	def __unicode__(self):
 		return str(self.user)
@@ -55,3 +57,5 @@ class PatientAppt(models.Model):
 
 	def __unicode__(self):
 		return str(self.doctor)
+
+

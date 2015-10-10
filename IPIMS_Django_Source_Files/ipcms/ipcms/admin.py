@@ -1,5 +1,5 @@
 from django.contrib import admin
-
+from .forms import *
 from .models import Patient, PatientAppt, PermissionsRole, Doctor
 
 
