@@ -1,5 +1,5 @@
 {% extends '_layouts/base.html' %}
-
+	{{ user.username }}
 {% load crispy_forms_tags %}
 
 {% block headline %}Patient Data<br>{% endblock %}
@@ -8,6 +8,11 @@
 
 {% if user.is_authenticated %}
 
-	Please Enter Your Information in the Forms Below
+	Please Enter Your Information in the Fields Below
+	<form action='' method='POST'>
+		{% csrf_token %}
+	<p>{{ form|crispy }}</p>
+	<input type="submit" value="Apply">
+	</form>
 {% endif %}
 {% endblock %}

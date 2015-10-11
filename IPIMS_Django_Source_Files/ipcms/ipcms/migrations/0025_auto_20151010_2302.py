@@ -7,12 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ipcms', '0022_auto_20151010_1746'),
+        ('ipcms', '0024_patientappt_date'),
     ]
 
     operations = [
-        migrations.RemoveField(
+        migrations.AlterField(
             model_name='patientappt',
-            name='date',
+            name='doctor',
+            field=models.ForeignKey(default=b'Select A Doctor..', to='ipcms.Doctor'),
         ),
     ]

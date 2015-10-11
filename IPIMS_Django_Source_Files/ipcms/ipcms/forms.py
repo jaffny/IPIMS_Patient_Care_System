@@ -44,12 +44,14 @@ class PatientForm(forms.ModelForm):
 class PatientApptForm(forms.ModelForm):
     class Meta:
         model = PatientAppt
+        widgets = {
+        'date': forms.TextInput(attrs={'placeholder': 'Example: Oct. 10, 2015, 10:10 p.m.'}),
+    }
         fields = '__all__'
-
         exclude = ['user']
         # exclude = ['user']
 class PatientDataForm(forms.ModelForm):
-    #user = forms.Charfield(max_length = 40)
     class Meta:
         model = TempPatientData
-        fields= ('ssn','allergies','medications')
+        fields = '__all__'
+        exclude = ['user']

@@ -35,7 +35,7 @@ class Patient(models.Model):
 #Class for the patients to schedule appointments for their associated doctor
 class PatientAppt(models.Model):
 	date = models.DateTimeField(auto_now=False, auto_now_add=False, unique=True)
-	doctor = models.ForeignKey(Doctor, unique=False, blank=True, default="")
+	doctor = models.ForeignKey(Doctor, unique=False, blank=False, default="Select A Doctor..")
 	pain_level = models.IntegerField(validators=[MinValueValidator(0),
                                        MaxValueValidator(10)], default=0)
 	medical_conditions = models.CharField(max_length=1000, default="None")
@@ -58,12 +58,19 @@ class PatientAppt(models.Model):
 		return str(self.doctor)
 
 class TempPatientData(models.Model):
-	phone_number = PhoneNumberField(blank = True)
-	ssn = models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(10)], default=0)
-	allergies = models.CharField(max_length=256, default="")
-	medications = models.CharField(max_length=256, default="")
+	user = models.ForeignKey(User,unique=True,null=True,default="Select a patient")
 
+	first_name = models.CharField(max_length=256, default="")
+	last_name = models.CharField(max_length=256, default="")
+	phone_number = PhoneNumberField(blank = True)
+	DOB =models.IntegerField(default=0)
+	ssn = models.IntegerField(default=0)
+	allergies = models.CharField(max_length=256, default="")
+	address = models.CharField(max_length=256, default="")
+	medications = models.CharField(max_length=256, default="")
+	insurance_provider =models.CharField(max_length=256, default="")
+	insurance_policy_number = models.IntegerField(default=0)
 	def __unicode__(self):
-		return str(self.user)
+		return str(self.Patient)
 #Create a class that will send the patients data into the system for the HSP staff to approve
 # class PatientPendingApproval(models.Model):

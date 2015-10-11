@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse_lazy
 from .forms import RegistrationForm, LoginForm, PatientForm,PatientDataForm
 from django.template import RequestContext
 from django.views.generic import ListView
-from .models import PermissionsRole, Patient,PatientData
+from .models import PermissionsRole, Patient, TempPatientData
 from django.shortcuts import render_to_response
 from .forms import PatientApptForm
 from django.template import RequestContext
@@ -123,19 +123,12 @@ def ScheduleView(request):
 		instance.patient = patient
 		instance.user = patient
 		instance.save()
+		return HttpResponseRedirect('success/')
 	context = {
 		"form": form,
 		"template_title": title
 	}
 	return render(request, 'accounts/schedule.html', context)
-	       if request.method == "POST":
-			  print (request.POST)
-			  form = PatientApptForm(request.POST)
-			  if form.is_valid():
-				 appt = form.save(user = request.user)
-				 form.save()
-		   		 return render_to_response('accounts/schedule.html', {'permissionModel': permissionModel, 'user': request.user, 'roles': permissionRoleForUser.role, 'form': form}, context_instance=RequestContext(request))
-
 '''
 View that forces request object to log out of the system
 '''
@@ -150,9 +143,28 @@ class CreatePatientView(generic.CreateView):
 	template_name = 'accounts/controlpanel.html'
 	form_class = PatientForm
 	success_url = reverse_lazy("FormTest")
+
 class PatientDataView(generic.FormView):
-	model = PatientData
-	template_name = '#'
+	model = TempPatientData
+	template_name = 'accounts/dataform.html'
 	form_class = PatientDataForm
 	success_url = reverse_lazy("FormTest")
-	template_name = 'accounts/dataform.html'
+
+
+def PatientDataView(request):
+
+	title = "Apply"
+	form = PatientDataForm(request.POST or None)
+
+	patient_model = TempPatientData
+	if form.is_valid():
+		instance = form.save(commit=False)
+		# user = patient_model.objects.filter(user__username=request.user.username)[:1].get()
+		# instance.user = user
+		instance.save()
+		return HttpResponseRedirect('success/')
+	context = {
+		"form": form,
+		"template_title": title
+	}
+	return render(request, 'accounts/dataform.html', context)
