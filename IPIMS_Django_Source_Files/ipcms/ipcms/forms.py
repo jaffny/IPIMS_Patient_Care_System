@@ -2,10 +2,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
-from .models import Patient, PatientAppt, PatientHealthConditions
+from .models import Patient, PatientAppt, PatientHealthConditions, TempPatientData
 from django.db import models
 from django import forms
-
 
 class RegistrationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
@@ -38,7 +37,7 @@ class PatientForm(forms.ModelForm):
     user = forms.CharField(max_length=40)
     class Meta:
         model = Patient
-        fields = ['phone_number', 'email_address', 'user']
+        fields = '__all__'
 
 
 class PatientApptForm(forms.ModelForm):
@@ -50,9 +49,16 @@ class PatientApptForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['user', 'current_health_conditions']
 
+
 class PatientHealthConditionsForm(forms.ModelForm):
     class Meta:
         model = PatientHealthConditions
         fields = '__all__'
-
         exclude = ['user']
+
+
+class TempPatientDataForm(forms.ModelForm):
+    class Meta:
+        model = TempPatientData
+        fields = '__all__'
+        exclude = ['user', 'data_sent']

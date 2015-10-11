@@ -20,12 +20,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    url(r'^$', HomePageView.as_view(), name='Home'),
+    url(r'^$', HomePageView, name='Home'),
     url(r'formsuccess/$', SuccessFormPageView.as_view(), name="DataSubmitted"),
     url(r'success/$', SuccessPageView.as_view(), name='Success'),
     url(r'accounts/apply/$', SignUpView.as_view(), name="Signup"),
     url(r'accounts/login/$', LoginView.as_view(), name="Login"),
-    url(r'accounts/portal/$', PatientPortalView.as_view(), name="Portal"),
+    url(r'accounts/portal/$', PatientPortalView, name="Portal"),
     url(r'logout/$', logout_user, name="Logout"),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^schedule/$', ScheduleView, name="Schedule"),

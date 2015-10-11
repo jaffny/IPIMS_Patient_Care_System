@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load static %}
+{% load crispy_forms_tags %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -64,14 +65,12 @@
 
 	<div class="container w">
     <h3>Welcome Back, {{ user.username|title }}</h3><hr>
+
+
 		<div class="row centered">
 
       {% if approval == 0 %}
       <h2>- We Are Still Reviewing Your Application -</h2>
-
-<!--       THIS IS WHERE THE PATIENT DATA SUBMISSION FORM NEEDS TO APPEAR -->
-
-      
 
       {% else %}
 
@@ -91,6 +90,31 @@
       {% endif %}
 
 		</div><!-- row -->
+
+    {% if approval == 0 %}
+
+    {% if not temp_user_data.data_sent == 1 %}
+
+      <div class="alert alert-warning">
+        <strong>Warning!</strong> Your account will not activate until the submission application has been approved by our HSP staff.
+      </div>
+
+      <form method ='POST' action=''>
+        {% csrf_token %}
+        {{ form | crispy }}
+      <input type="submit" value="Submit Patient Application" class="btn default col-md-12"/>
+      </form>
+
+    {% else %}
+
+    <center>
+    <div class="alert alert-success">
+      <strong>Success!</strong> Your application has been submitted and is currently under review!
+    </div>
+    </center>
+
+    {% endif %}
+  {% endif %}
 		<br>
 
 		<br><br>
@@ -98,7 +122,6 @@
 
 
 
-	
 	<div id="r">
 		<div class="container">
 			<div class="row centered">

@@ -22,10 +22,37 @@ class PermissionsRole(models.Model):
 	def __unicode__(self):
 		return str(self.role)
 
+
+
+#This is the mediator for the data that is submitted by the user to the HSP staff
+#The data is stored and if the HSP staff approves the patient, then the data will be stored into a patient class
+class TempPatientData(models.Model):
+
+	user = models.ForeignKey(User,unique=True,null=True,default="")
+
+	first_name = models.CharField(max_length=256, default="")
+	last_name = models.CharField(max_length=256, default="")
+	phone_number = PhoneNumberField(blank = True)
+	DOB =models.IntegerField(default=0)
+	ssn = models.IntegerField(default=0)
+	allergies = models.CharField(max_length=256, default="")
+	address = models.CharField(max_length=256, default="")
+	medications = models.CharField(max_length=256, default="")
+	insurance_provider =models.CharField(max_length=256, default="")
+	insurance_policy_number = models.IntegerField(default=0)
+	email_address = models.CharField(max_length = 500, unique=True)
+	data_sent = models.IntegerField(default=0)
+
+	def __unicode__(self):
+		return "test"
+
+
+
 #This patient model will extend the user class so we can add the associated medical data for the user
 class Patient(models.Model):
-	phone_number = PhoneNumberField(blank = True)
-	email_address = models.EmailField(blank = True, max_length=254)
+
+	fill_from_application = models.ForeignKey(TempPatientData,unique=True,null=True,default="")
+
 	user = models.OneToOneField(User, unique=True,  blank=True, default="", null=True)
 	approved = models.IntegerField(default=0, null=False)
 
@@ -70,7 +97,4 @@ class PatientAppt(models.Model):
 
 
 
-
-#Create a class that will send the patients data into the system for the HSP staff to approve
-# class PatientPendingApproval(models.Model):
 

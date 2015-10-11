@@ -5,14 +5,15 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User 
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse_lazy
-from .forms import RegistrationForm, LoginForm, PatientForm, PatientHealthConditionsForm
+from .forms import RegistrationForm, LoginForm, PatientForm, PatientHealthConditionsForm, TempPatientDataForm
 from django.template import RequestContext
 from django.views.generic import ListView
-from .models import PermissionsRole, Patient, PatientHealthConditions
+from .models import PermissionsRole, Patient, PatientHealthConditions, TempPatientData
 from django.shortcuts import render_to_response
 from .forms import PatientApptForm
 from django.template import RequestContext
 from django.shortcuts import render
+
 
 STAFF_APPROVAL_ROLES = ('admin', 'doctor', 'staff', 'nurse', 'lab')
 
@@ -20,54 +21,58 @@ STAFF_APPROVAL_ROLES = ('admin', 'doctor', 'staff', 'nurse', 'lab')
 Homepage to display the main control panel or HomePage based on user authentication
 '''
 
-class HomePageView(generic.TemplateView):
-	template_name = 'home.html'
-	def get(self, request):
+def HomePageView(request):
 
-		#Model Definitions & Declarations
-		permissionModel = PermissionsRole
-		patientModel = Patient
 
-		#Assign default permission role
-		permissionRoleForUser = 'pending'
+	#Model Definitions & Declarations
+	permissionModel = PermissionsRole
+	patientModel = Patient
 
-		#Assign a default approval rating
-		approval = 0
+	#temp data for the user has been found
+	tempDataFound = 0
 
-		#Assign a default authentication boolean
-		authenticated = False
+	#Assign default permission role
+	permissionRoleForUser = 'pending'
 
-		approvalSwitch = 0
+	#Assign a default approval rating
+	approval = 0
 
-		#Check to see if the user has logged into the system or not
-		if request.user.is_authenticated():
+	#Assign a default authentication boolean
+	authenticated = False
 
-			#Boolean to ensure valid request authentication
-			authenticated = True
+	approvalSwitch = 0
 
-			#Attempt a DB query on the request object
-			if permissionModel.objects.filter(user__username=request.user.username)[:1].exists():
+	#Check to see if the user has logged into the system or not
+	if request.user.is_authenticated():
 
-				#If request object from query exists, create a variable assignment on that object
-				permissionRoleForUser = permissionModel.objects.filter(user__username=request.user.username)[:1].get()
+		#Boolean to ensure valid request authentication
+		authenticated = True
 
-				#If the logged in person is a patient, grab request object, make a query and grab the approval integer
-				if patientModel.objects.filter(user__username=request.user.username)[:1].exists():
+		#Attempt a DB query on the request object
+		if permissionModel.objects.filter(user__username=request.user.username)[:1].exists():
 
-					#Get an integer declaraction for the approval of the user
-					approvalSwitch = patientModel.objects.filter(user__username=request.user.username)[:1].get()
+			#If request object from query exists, create a variable assignment on that object
+			permissionRoleForUser = permissionModel.objects.filter(user__username=request.user.username)[:1].get()
 
-				#If the person is a hospital member, then they will automatically be considered approved
-				if (permissionRoleForUser.role in STAFF_APPROVAL_ROLES):
-					approval = 1
-				else:
-					approval = approvalSwitch.approved
+			#If the logged in person is a patient, grab request object, make a query and grab the approval integer
+			if patientModel.objects.filter(user__username=request.user.username)[:1].exists():
 
-		#Under the instance that the user is not authenticated
-		else:
-			permissionRoleForUser = ""
+				#Get an integer declaraction for the approval of the user
+				approvalSwitch = patientModel.objects.filter(user__username=request.user.username)[:1].get()
 
-		return render_to_response('index.html', {'permissionModel': permissionModel, 'user': request.user, 'roles': permissionRoleForUser, 'approval': approval, 'authenticated': authenticated})
+			#If the person is a hospital member, then they will automatically be considered approved
+			if (permissionRoleForUser.role in STAFF_APPROVAL_ROLES):
+				approval = 1
+			else:
+				approval = approvalSwitch.approved
+
+	#Under the instance that the user is not authenticated
+	else:
+		permissionRoleForUser = ""
+
+
+
+	return render( request, 'index.html', {'permissionModel': permissionModel, 'user': request.user, 'roles': permissionRoleForUser, 'approval': approval, 'authenticated': authenticated})
 
 
 '''
@@ -109,74 +114,101 @@ class LoginView(generic.FormView):
 		else:
 			return self.invalid(form)
 
-class PatientPortalView(generic.TemplateView):
-	template_name = 'home.html'
-	def get(self, request):
+def PatientPortalView(request):
+	# template_name = 'home.html'
 
-		#Model Definitions & Declarations
-		permissionModel = PermissionsRole
-		patientModel = Patient
+	#Model Definitions & Declarations
+	permissionModel = PermissionsRole
+	patientModel = Patient
+	userModel = User
+	tempModel = TempPatientData
+	conditions_complete = False
+	patient_model = Patient
+	conditions_model = PatientHealthConditions
 
-		conditions_complete = False
-		patient_model = Patient
-		conditions_model = PatientHealthConditions
+	approvalSwitch = 0
 
-		approvalSwitch = 0
+	#Assign default permission role
+	permissionRoleForUser = 'pending'
 
-		#Assign default permission role
-		permissionRoleForUser = 'pending'
+	#Assign a default approval rating
+	approval = 0
 
-		#Assign a default approval rating
-		approval = 0
+	#Assign a default authentication boolean
+	authenticated = False
 
-		#Assign a default authentication boolean
-		authenticated = False
+	patient = -1
 
-		patient = -1
+	#Check to see if the user has logged into the system or not
+	if request.user.is_authenticated():
 
-		#Check to see if the user has logged into the system or not
-		if request.user.is_authenticated():
+		if patient_model.objects.filter(user__username=request.user.username)[:1].exists():
+			patient = patient_model.objects.filter(user__username=request.user.username)[:1].get()
 
-			if patient_model.objects.filter(user__username=request.user.username)[:1].exists():
-				patient = patient_model.objects.filter(user__username=request.user.username)[:1].get()
+		if conditions_model.objects.filter(user=patient)[:1].exists():
+			conditions_complete = True
+			patient_conditions = conditions_model.objects.filter(user=patient)[:1].get()
 
-			if conditions_model.objects.filter(user=patient)[:1].exists():
-				conditions_complete = True
-				patient_conditions = conditions_model.objects.filter(user=patient)[:1].get()
+		#Boolean to ensure valid request authentication
+		authenticated = True
 
-			#Boolean to ensure valid request authentication
-			authenticated = True
+		#Attempt a DB query on the request object
+		if permissionModel.objects.filter(user__username=request.user.username)[:1].exists():
 
-			#Attempt a DB query on the request object
-			if permissionModel.objects.filter(user__username=request.user.username)[:1].exists():
+			#If request object from query exists, create a variable assignment on that object
+			permissionRoleForUser = permissionModel.objects.filter(user__username=request.user.username)[:1].get()
 
-				#If request object from query exists, create a variable assignment on that object
-				permissionRoleForUser = permissionModel.objects.filter(user__username=request.user.username)[:1].get()
+			#If the logged in person is a patient, grab request object, make a query and grab the approval integer
+			if patientModel.objects.filter(user__username=request.user.username)[:1].exists():
 
-				#If the logged in person is a patient, grab request object, make a query and grab the approval integer
-				if patientModel.objects.filter(user__username=request.user.username)[:1].exists():
+				#Get an integer declaraction for the approval of the user
+				approvalSwitch = patientModel.objects.filter(user__username=request.user.username)[:1].get()
 
-					#Get an integer declaraction for the approval of the user
-					approvalSwitch = patientModel.objects.filter(user__username=request.user.username)[:1].get()
+			#If the person is a hospital member, then they will automatically be considered approved
+			if (permissionRoleForUser.role in STAFF_APPROVAL_ROLES):
+				approval = 1
+			else:
+				approval = approvalSwitch.approved
 
-				#If the person is a hospital member, then they will automatically be considered approved
-				if (permissionRoleForUser.role in STAFF_APPROVAL_ROLES):
-					approval = 1
-				else:
-					approval = approvalSwitch.approved
-
-		#Under the instance that the user is not authenticated
-		else:
-			permissionRoleForUser = ""
-
-		return render_to_response('portal.html', {'permissionModel': permissionModel, 'user': request.user, 'roles': permissionRoleForUser, 'approval': approval, 'authenticated': authenticated, 'conditions_complete': conditions_complete})
+	#Under the instance that the user is not authenticated
+	else:
+		permissionRoleForUser = ""
 
 
+	tempUserInformation = ""
+	if tempModel.objects.filter(user=request.user)[:1].exists():
+		tempUserInformation = tempModel.objects.filter(user=request.user)[:1].get()
+
+
+	form = TempPatientDataForm()
+
+	if request.method == "POST":
+
+		form = TempPatientDataForm(request.POST)
+		if form.is_valid():
+			instance = form.save(commit=False)
+			instance.user = request.user
+			instance.data_sent = 1
+			instance.save()
+			return HttpResponseRedirect('formsuccess')
+
+	context = {
+
+		'form': form,
+		'permissionModel': permissionModel,
+		'user': request.user,
+		'roles': permissionRoleForUser,
+		'approval': approval,
+		'authenticated': authenticated,
+		'conditions_complete': conditions_complete,
+		'temp_user_data': tempUserInformation
+	}
+
+	return render(request, 'portal.html', context)
 
 '''
 View that is responsible for rendering the patient scheduling system for the user
 '''
-
 def ScheduleView(request):
 
 	title = "Appointment Schedule"
@@ -211,7 +243,6 @@ def HealthConditionsView(request):
 
 	title = "Health Conditions"
 	form = PatientHealthConditionsForm(request.POST or None)
-
 
 	conditions_model = PatientHealthConditions
 	patient_model = Patient
