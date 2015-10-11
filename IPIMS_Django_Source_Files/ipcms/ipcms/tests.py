@@ -5,7 +5,7 @@ import unittest
 
 class RegistrationInfoTest(unittest.TestCase):
     #registration information functionality
-    def test_one_plus_one(self):
+    def test_html_on_homepage(self):
         assert 1 + 1 == 2
 
 class ScheduleAppointmentTest(unittest.TestCase):
