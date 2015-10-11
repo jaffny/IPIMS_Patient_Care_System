@@ -65,7 +65,7 @@ class HomePageView(generic.TemplateView):
 		else:
 			permissionRoleForUser = ""
 
-		return render_to_response('accounts/controlpanel.html', {'permissionModel': permissionModel, 'user': request.user, 'roles': permissionRoleForUser, 'approval': approval, 'authenticated': authenticated})
+		return render_to_response('index.html', {'permissionModel': permissionModel, 'user': request.user, 'roles': permissionRoleForUser, 'approval': approval, 'authenticated': authenticated})
 
 '''
 Basic success page response rendering for the user
@@ -82,7 +82,7 @@ class SignUpView(generic.CreateView):
 
 	form_class = RegistrationForm
 	model = User 
-	template_name = 'accounts/signup.html'
+	template_name = 'register.html'
 	success_url = reverse_lazy('Success')
 
 
@@ -93,7 +93,7 @@ Login view for the user to redirect into the patient/admin portal
 class LoginView(generic.FormView):
 	form_class = LoginForm
 	success_url = reverse_lazy('Home')
-	template_name = 'accounts/login.html'
+	template_name = 'login.html'
 
 	def form_valid(self, form):
 		username = form.cleaned_data['username']
@@ -122,7 +122,7 @@ def ScheduleView(request):
 		instance.patient = patient
 		instance.user = patient
 		instance.save()
-		return HttpResponseRedirect('success/')
+		return HttpResponseRedirect('formsuccess')
 	context = {
 		"form": form,
 		"template_title": title
@@ -144,5 +144,7 @@ class CreatePatientView(generic.CreateView):
 	form_class = PatientForm
 	success_url = reverse_lazy("FormTest")
 
+class SuccessFormPageView(generic.TemplateView):
+	template_name = 'accounts/formsuccess.html'
 
 

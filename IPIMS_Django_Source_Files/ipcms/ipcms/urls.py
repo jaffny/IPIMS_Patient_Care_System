@@ -16,14 +16,19 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from .views import *
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^$', HomePageView.as_view(), name='Home'),
+    url(r'formsuccess/$', SuccessFormPageView.as_view(), name="DataSubmitted"),
     url(r'success/$', SuccessPageView.as_view(), name='Success'),
-    url(r'accounts/register/$', SignUpView.as_view(), name="Signup"),
+    url(r'accounts/apply/$', SignUpView.as_view(), name="Signup"),
     url(r'accounts/login/$', LoginView.as_view(), name="Login"),
     url(r'logout/$', logout_user, name="Logout"),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^schedule/$', ScheduleView, name="Schedule"),
-    url(r'tester$', CreatePatientView.as_view(), name="FormTest"),
-]
+
+
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+

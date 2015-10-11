@@ -18,15 +18,13 @@
 
 {% endblock %}
 
-
 {% block content %}
-
 
 	{% if not approval == 0 %}
 		You're approved!
+
+		<a href="/schedule">Schedule Appt!</a>
 	{% endif %}
-
 	{{ user.username }}
-
 {% endblock %}
 

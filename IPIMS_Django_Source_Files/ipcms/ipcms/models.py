@@ -57,6 +57,8 @@ class PatientAppt(models.Model):
 	def __unicode__(self):
 		return str(self.doctor)
 
+		
+
 
 #Create a class that will send the patients data into the system for the HSP staff to approve
 # class PatientPendingApproval(models.Model):
