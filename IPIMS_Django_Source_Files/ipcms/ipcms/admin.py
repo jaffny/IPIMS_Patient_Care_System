@@ -14,7 +14,10 @@ class PermissionsRoleAdmin(admin.ModelAdmin):
 class DoctorAdmin(admin.ModelAdmin):
 	list_display = ('doctor_first_name', 'doctor_last_name')
 
-admin.site.register(PatientHealthConditions)
+class PatientHealthConditionsAdmin(admin.ModelAdmin):
+	form = PatientHealthConditionsForm
+
+admin.site.register(PatientHealthConditions, PatientHealthConditionsAdmin)
 admin.site.register(Patient)
 admin.site.register(PatientAppt, PatientApptAdmin)
 admin.site.register(PermissionsRole, PermissionsRoleAdmin)

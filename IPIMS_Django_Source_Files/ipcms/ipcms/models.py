@@ -56,13 +56,13 @@ class PatientHealthConditions(models.Model):
 #Class for the patients to schedule appointments for their associated doctor
 class PatientAppt(models.Model):
 	date = models.CharField(max_length=1000, unique=True)
-	doctor = models.ForeignKey(Doctor, unique=False, blank=False, default="Select A Doctor..")
+	doctor = models.ForeignKey(Doctor, unique=False, blank=False, default=-1)
 	pain_level = models.IntegerField(validators=[MinValueValidator(0),
                                        MaxValueValidator(10)], default=0)
 	medical_conditions = models.CharField(max_length=1000, default="None")
 	allergies = models.CharField(max_length=1000, default="None")
 	user = models.ForeignKey(Patient, unique=False, blank=True, default="")
-	current_health_conditions = models.OneToOneField(PatientHealthConditions, unique=False, blank=True, default="", null=True)
+	current_health_conditions = models.ForeignKey(PatientHealthConditions, unique=False, blank=True, default="", null=True)
 
 	def __unicode__(self):
 		return str(self.doctor)

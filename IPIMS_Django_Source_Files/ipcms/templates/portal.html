@@ -63,22 +63,30 @@
 
 
 	<div class="container w">
-		<div class="row centered">
-			<br><br>
-
-
     <h3>Welcome Back, {{ user.username|title }}</h3><hr>
+		<div class="row centered">
+
       {% if approval == 0 %}
       <h2>- We Are Still Reviewing Your Application -</h2>
 
 <!--       THIS IS WHERE THE PATIENT DATA SUBMISSION FORM NEEDS TO APPEAR -->
 
+      
+
       {% else %}
 
-      <h2>Patient Portal</h2>
+      <h2>Patient Portal</h2><hr>
+
+      {% if not conditions_complete %}
+
+      <h3>Before Continuing Further, please <a href="/health_conditions">add your health conditions..</a></h3>
+
+      {% else %}
 
       <a href="/health_conditions">Update Health Condtions</a><br>
       <a href="/schedule">Schedule Appointment</a>
+
+      {% endif %}
 
       {% endif %}
 
