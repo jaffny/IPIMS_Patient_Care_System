@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
-from .models import Patient, PatientAppt
+from .models import Patient, PatientAppt, PatientHealthConditions
 from django.db import models
 from django import forms
 
@@ -47,5 +47,14 @@ class PatientApptForm(forms.ModelForm):
         widgets = {
         'date': forms.TextInput(attrs={'placeholder': 'Example: Oct. 10, 2015, 10:10 p.m.'}),
     }
+        fields = '__all__'
+        exclude = ['user']
+
+class PatientHealthConditionsForm(forms.ModelForm):
+    class Meta:
+        model = PatientHealthConditions
+    #     widgets = {
+    #     'date': forms.TextInput(attrs={'placeholder': 'Example: Oct. 10, 2015, 10:10 p.m.'}),
+    # }
         fields = '__all__'
         exclude = ['user']

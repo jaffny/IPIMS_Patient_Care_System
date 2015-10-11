@@ -42,17 +42,17 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="/">HOME</a></li>
+            <li><a href="/">HOME</a></li>
 
             {% if not user.is_authenticated %}
             <li><a href="/accounts/apply">APPLY</a></li>
             <li><a href="/accounts/login">LOGIN</a></li>
             {% elif approval == 0 %}
 
-            <li><a href="/accounts/portal">CHECK APPROVAL STATUS</a></li>
+            <li class="active"><a href="/accounts/portal">CHECK APPROVAL STATUS</a></li>
             <li><a href="/logout">LOGOUT</a></li>
             {% else %}
-            <li><a href="/accounts/portal">USER PORTAL</a></li>
+            <li class="active"><a href="/accounts/portal">USER PORTAL</a></li>
             <li><a href="/logout">LOGOUT</a></li>
             {% endif %}
           </ul>
@@ -60,59 +60,35 @@
       </div>
     </div>
 
-	<div id="headerwrap">
-		<div class="container">
-			<div class="row centered">
-				<div class="col-lg-8 col-lg-offset-2">
-				<h1><b>IPIMS</b> Solutions</h1>
-				<h2>Premium Health Management Done Right.</h2>
-				</div>
-			</div><!-- row -->
-		</div><!-- container -->
-	</div><!-- headerwrap -->
 
 
 	<div class="container w">
 		<div class="row centered">
 			<br><br>
-			<div class="col-lg-4">
-				<i class="fa fa-heart"></i>
-				<h4>PATIENT CARE</h4>
-				<p>IPIMS Solutions is passionate about delivering quality patient care to all those who take part in the amazing experience. With professionally developed backend support and amazing scheduling services, 98% of our feedback is positively reinforced.</p>
-			</div><!-- col-lg-4 -->
 
-			<div class="col-lg-4">
-				<i class="fa fa-laptop"></i>
-				<h4>QUALITY UX</h4>
-				<p>The user experience at IPIMS Solutions is impeccable. With state-of-the-art designs, mobile friendly support and cross platform compatible, we excel in the area of UX and compatibility.</p>
-			</div><!-- col-lg-4 -->
 
-			<div class="col-lg-4">
-				<i class="fa fa-trophy"></i>
-				<h4>FANTASTIC SUPPORT</h4>
-				<p>Our system is constantly maintained by a development team with full functional, unit and integration testing running on our build servers. The data is extremely secure. The medical staff is available 24/7 and appointments and alerts can be made and sent in just the click of a button</p>
-			</div><!-- col-lg-4 -->
+    <h3>Welcome Back, {{ user.username|title }}</h3><hr>
+      {% if approval == 0 %}
+      <h2>- We Are Still Reviewing Your Application -</h2>
+
+<!--       THIS IS WHERE THE PATIENT DATA SUBMISSION FORM NEEDS TO APPEAR -->
+
+      {% else %}
+
+      <h2>Patient Portal</h2>
+
+      <a href="/health_conditions">Update Health Condtions</a><br>
+      <a href="/schedule">Schedule Appointment</a>
+
+      {% endif %}
+
 		</div><!-- row -->
 		<br>
-		<br>
+
+		<br><br>
 	</div><!-- container -->
 
 
-	<!-- FEATURE SECTION -->
-	<div class="container wb">
-		<div class="row centered">
-			<br><br>
-			<div class="col-lg-8 col-lg-offset-2">
-				<h4>WORLD CLASS HOSPITAL EXPERIENCE</h4>
-				<p>By being true to the brand we represent, we elevate the audiences’ relationship to it. Like becomes love becomes a passion. Passion becomes advocacy. And we see the brand blossom from within, creating a whole story the audience embraces. That’s when the brand can truly flex its muscles.</p>
-			<p><br/><br/></p>
-			</div>
-			<div class="col-lg-2"></div>
-			<div class="col-lg-10 col-lg-offset-1">
-				<center><img class="img-responsive" src="{% static 'img/munter.png' %}" alt=""></center>
-			</div>
-		</div><!-- row -->
-	</div><!-- container -->
 
 	
 	<div id="r">
@@ -132,15 +108,17 @@
 		<div class="container">
 			<div class="row centered">
 				IPIMS Solutions - 2015
+		
 			</div><!-- row -->
 		</div><!-- container -->
 	</div><!-- Footer -->
+
 
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
   </body>
 </html>

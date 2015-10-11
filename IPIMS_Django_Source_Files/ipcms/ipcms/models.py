@@ -32,15 +32,10 @@ class Patient(models.Model):
 	def __unicode__(self):
 		return str(self.user)
 
-#Class for the patients to schedule appointments for their associated doctor
-class PatientAppt(models.Model):
-	date = models.DateTimeField(auto_now=False, auto_now_add=False, unique=True)
-	doctor = models.ForeignKey(Doctor, unique=False, blank=False, default="Select A Doctor..")
-	pain_level = models.IntegerField(validators=[MinValueValidator(0),
-                                       MaxValueValidator(10)], default=0)
-	medical_conditions = models.CharField(max_length=1000, default="None")
-	allergies = models.CharField(max_length=1000, default="None")
+class PatientHealthConditions(models.Model):
+
 	user = models.ForeignKey(Patient, unique=False, blank=True, default="")
+
 	nausea_level = models.IntegerField(validators=[MinValueValidator(0),
                                        MaxValueValidator(10)], default=0)
 	hunger_level = models.IntegerField(validators=[MinValueValidator(0),
@@ -55,9 +50,25 @@ class PatientAppt(models.Model):
                                        MaxValueValidator(10)], default=0)
 
 	def __unicode__(self):
+		return str(self.user.user.username)
+
+
+#Class for the patients to schedule appointments for their associated doctor
+class PatientAppt(models.Model):
+	date = models.CharField(max_length=1000, unique=True)
+	doctor = models.ForeignKey(Doctor, unique=False, blank=False, default="Select A Doctor..")
+	pain_level = models.IntegerField(validators=[MinValueValidator(0),
+                                       MaxValueValidator(10)], default=0)
+	medical_conditions = models.CharField(max_length=1000, default="None")
+	allergies = models.CharField(max_length=1000, default="None")
+	user = models.ForeignKey(Patient, unique=False, blank=True, default="")
+	current_health_conditions = models.OneToOneField(PatientHealthConditions, unique=False, blank=True, default="", null=True)
+
+	def __unicode__(self):
 		return str(self.doctor)
 
-		
+
+
 
 
 #Create a class that will send the patients data into the system for the HSP staff to approve

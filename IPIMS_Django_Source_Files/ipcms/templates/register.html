@@ -28,7 +28,6 @@
     <![endif]-->
   </head>
 
-
   <body>
 
     <!-- Fixed navbar -->
@@ -45,13 +44,22 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="/">HOME</a></li>
-            <li class="active"><a href="/accounts/apply">APPLY</a></li>
+
+            {% if not user.is_authenticated %}
+            <li><a href="/accounts/apply">APPLY</a></li>
             <li><a href="/accounts/login">LOGIN</a></li>
+            {% elif approval == 0 %}
+
+            <li class="active"><a href="/accounts/portal">CHECK APPROVAL STATUS</a></li>
+            <li><a href="/logout">LOGOUT</a></li>
+            {% else %}
+            <li class="active"><a href="/accounts/portal">USER PORTAL</a></li>
+            <li><a href="/logout">LOGOUT</a></li>
+            {% endif %}
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </div>
-
 
 
 	<div class="container w">
