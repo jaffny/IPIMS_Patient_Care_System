@@ -16,7 +16,8 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from .views import *
-
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     url(r'^$', HomePageView.as_view(), name='Home'),
     url(r'success/$', SuccessPageView.as_view(), name='Success'),
@@ -27,4 +28,4 @@ urlpatterns = [
     url(r'^schedule/$', ScheduleView, name="Schedule"),
     url(r'tester$', CreatePatientView.as_view(), name="FormTest"),
     url(r'accounts/dataform/$', PatientDataView, name="PatientInfo"),
-]
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
