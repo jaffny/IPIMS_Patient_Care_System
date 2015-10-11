@@ -45,16 +45,14 @@ class PatientApptForm(forms.ModelForm):
     class Meta:
         model = PatientAppt
         widgets = {
-        'date': forms.TextInput(attrs={'placeholder': 'Example: Oct. 10, 2015, 10:10 p.m.'}),
+        'date': forms.TextInput(attrs={'placeholder': 'Selecting This Textbox Will Enable A Drop Down For Date & Time'}),
     }
         fields = '__all__'
-        exclude = ['user']
+        exclude = ['user', 'current_health_conditions']
 
 class PatientHealthConditionsForm(forms.ModelForm):
     class Meta:
         model = PatientHealthConditions
-    #     widgets = {
-    #     'date': forms.TextInput(attrs={'placeholder': 'Example: Oct. 10, 2015, 10:10 p.m.'}),
-    # }
         fields = '__all__'
+
         exclude = ['user']

@@ -95,7 +95,7 @@ Login view for the user to redirect into the patient/admin portal
 
 class LoginView(generic.FormView):
 	form_class = LoginForm
-	success_url = reverse_lazy('Home')
+	success_url = reverse_lazy('Portal')
 	template_name = 'login.html'
 
 	def form_valid(self, form):
@@ -112,10 +112,16 @@ class LoginView(generic.FormView):
 class PatientPortalView(generic.TemplateView):
 	template_name = 'home.html'
 	def get(self, request):
-		approvalSwitch = 0
+
 		#Model Definitions & Declarations
 		permissionModel = PermissionsRole
 		patientModel = Patient
+
+		conditions_complete = False
+		patient_model = Patient
+		conditions_model = PatientHealthConditions
+
+		approvalSwitch = 0
 
 		#Assign default permission role
 		permissionRoleForUser = 'pending'
@@ -126,8 +132,17 @@ class PatientPortalView(generic.TemplateView):
 		#Assign a default authentication boolean
 		authenticated = False
 
+		patient = -1
+
 		#Check to see if the user has logged into the system or not
 		if request.user.is_authenticated():
+
+			if patient_model.objects.filter(user__username=request.user.username)[:1].exists():
+				patient = patient_model.objects.filter(user__username=request.user.username)[:1].get()
+
+			if conditions_model.objects.filter(user=patient)[:1].exists():
+				conditions_complete = True
+				patient_conditions = conditions_model.objects.filter(user=patient)[:1].get()
 
 			#Boolean to ensure valid request authentication
 			authenticated = True
@@ -154,7 +169,7 @@ class PatientPortalView(generic.TemplateView):
 		else:
 			permissionRoleForUser = ""
 
-		return render_to_response('portal.html', {'permissionModel': permissionModel, 'user': request.user, 'roles': permissionRoleForUser, 'approval': approval, 'authenticated': authenticated})
+		return render_to_response('portal.html', {'permissionModel': permissionModel, 'user': request.user, 'roles': permissionRoleForUser, 'approval': approval, 'authenticated': authenticated, 'conditions_complete': conditions_complete})
 
 
 
@@ -166,11 +181,17 @@ def ScheduleView(request):
 
 	title = "Appointment Schedule"
 	form = PatientApptForm(request.POST or None)
-
 	patient_model = Patient
-	conditions_model = PatientHealthConditions
+
 	patient = patient_model.objects.filter(user__username=request.user.username)[:1].get()
-	patient_conditions = conditions_model.objects.filter(user=patient)[:1].get()
+
+	conditions_complete = False
+
+	conditions_model = PatientHealthConditions
+	if (conditions_model.objects.filter(user=patient)[:1].exists()):
+		conditions_complete = True
+		patient_conditions = conditions_model.objects.filter(user=patient)[:1].get()
+
 	if form.is_valid():
 		instance = form.save(commit=False)
 		instance.patient = patient
@@ -178,9 +199,11 @@ def ScheduleView(request):
 		instance.current_health_conditions = patient_conditions
 		instance.save()
 		return HttpResponseRedirect('formsuccess')
+
 	context = {
 		"form": form,
-		"template_title": title
+		"template_title": title,
+		"conditions_complete": conditions_complete
 	}
 	return render(request, 'schedule.html', context)
 
@@ -189,13 +212,33 @@ def HealthConditionsView(request):
 	title = "Health Conditions"
 	form = PatientHealthConditionsForm(request.POST or None)
 
+
+	conditions_model = PatientHealthConditions
 	patient_model = Patient
-	if form.is_valid():
-		instance = form.save(commit=False)
+
+	data_exists = False
+
+	#Check if the health conditions already exist within the database
+	if patient_model.objects.filter(user__username=request.user.username)[:1].exists():
 		patient = patient_model.objects.filter(user__username=request.user.username)[:1].get()
-		instance.user = patient
-		instance.save()
-		return HttpResponseRedirect('formsuccess')
+
+		if conditions_model.objects.filter(user=patient)[:1].exists():
+			instance = conditions_model.objects.filter(user=patient)[:1].get()
+			form = PatientHealthConditionsForm(instance=instance)
+			data_exists = True
+			
+
+	if request.method == "POST":
+
+		if conditions_model.objects.filter(user=patient)[:1].exists():
+			instance = conditions_model.objects.filter(user=patient)[:1].get()
+			form = PatientHealthConditionsForm(request.POST, instance=instance)
+
+		if form.is_valid():
+			instance = form.save(commit=False)
+			instance.user = patient
+			instance.save()
+			return HttpResponseRedirect('formsuccess')
 
 	context = {
 		"form": form,
@@ -211,12 +254,6 @@ def logout_user(request):
 	logout(request)
 	return HttpResponseRedirect(reverse_lazy('Home'))
 
-
-class CreatePatientView(generic.CreateView):
-	model = Patient
-	template_name = 'accounts/controlpanel.html'
-	form_class = PatientForm
-	success_url = reverse_lazy("FormTest")
 
 class SuccessFormPageView(generic.TemplateView):
 	template_name = 'accounts/formsuccess.html'
