@@ -1,3 +1,5 @@
+#to execute test, use 'python tests.py'
+
 import unittest
 
 class UrlsTest(unittest.TestCase):
