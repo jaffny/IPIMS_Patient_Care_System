@@ -61,7 +61,7 @@ class Patient(models.Model):
 
 class PatientHealthConditions(models.Model):
 
-	user = models.ForeignKey(Patient, unique=False, blank=True, default="")
+	# user = models.ForeignKey(Patient, unique=False, blank=True, default="")
 
 	nausea_level = models.IntegerField(validators=[MinValueValidator(0),
                                        MaxValueValidator(10)], default=0)
