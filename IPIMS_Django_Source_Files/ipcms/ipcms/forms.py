@@ -9,7 +9,7 @@ from django import forms
 class RegistrationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
-        self.fields['username'].label = "Patient Email"
+        self.fields['username'].label = "Patient Username"
         self.helper = FormHelper()
         self.helper.layout = Layout(
             'username',

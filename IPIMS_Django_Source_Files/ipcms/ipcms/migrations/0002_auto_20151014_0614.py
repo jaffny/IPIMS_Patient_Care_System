@@ -11,8 +11,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='patienthealthconditions',
-            name='user',
+        migrations.AlterField(
+            model_name='patient',
+            name='role',
+            field=models.OneToOneField(default=b'patient', to='ipcms.PermissionsRole'),
         ),
     ]

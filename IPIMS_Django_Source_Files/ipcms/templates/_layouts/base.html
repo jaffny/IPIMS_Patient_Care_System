@@ -20,14 +20,28 @@
     <link href="{% static 'css/main.css' %}" rel="stylesheet">
 
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+    <script type="text/javascript" src="{% static 'js/jquery.simple-dtpicker.js' %}"></script>
+    <link type="text/css" href="http://mugifly.github.io/jquery-simple-datetimepicker/jquery.simple-dtpicker.css" rel="stylesheet" />
+    <link href="{% static 'css/buttons.css' %}" rel="stylesheet">
+    <link href="{% static 'css/card.css' %}" rel="stylesheet">
+
+
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
+
+
   </head>
 
   <body>
+
+    {{ static }}
 
     <!-- Fixed navbar -->
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -47,9 +61,12 @@
             {% if not user.is_authenticated %}
             <li><a href="/accounts/apply">APPLY</a></li>
             <li><a href="/accounts/login">LOGIN</a></li>
-            {% elif approval == 0 %}
+            {% elif approval == 0 and not user.username == "admin" %}
 
             <li class="active"><a href="/accounts/portal">CHECK APPROVAL STATUS</a></li>
+            <li><a href="/logout">LOGOUT</a></li>
+            {% elif user.username == "admin" %}
+            <li class="active"><a href="/accounts/portal">ADMIN PORTAL</a></li>
             <li><a href="/logout">LOGOUT</a></li>
             {% else %}
             <li class="active"><a href="/accounts/portal">USER PORTAL</a></li>
@@ -64,7 +81,8 @@
 
     <div class="container w">
         {% if user.is_authenticated %}
-<a href="accounts/portal/">Return To The Portal</a>
+<!-- <a href="accounts/portal/">Return To The Portal</a> -->
+        <a href="/accounts/portal/" class="btnn btn-blue">Return To The Portal</a>
 {% endif %}
             {% block content %}{% endblock %}
 
@@ -100,7 +118,8 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
+
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
   </body>
+
 </html>

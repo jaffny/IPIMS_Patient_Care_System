@@ -1,7 +1,10 @@
 {% extends '_layouts/base.html' %}
 {% load crispy_forms_tags %}
 
+
+
 {% block content %}
+
 
 <center><h1>Schedule Appointment</h1></center>
 
@@ -16,5 +19,10 @@
 </div>
 {% endif %}
 
+	<script type="text/javascript">
+		$(function(){
+			$('*[id=id_date]').appendDtpicker();
+		});
+	</script>
 
 {% endblock %}

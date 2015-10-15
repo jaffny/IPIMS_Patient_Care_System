@@ -1,4 +1,4 @@
-<html>
+tml>
 <head>
 # CSE360_Project
 </head>
@@ -27,6 +27,19 @@ the needs of a basic private clinic. The various features can be found below
 <b>Dev</b> Sang Le - (602) 802 3450 - sble1@asu.edu<br />
 <br>
 =======
+
+#How To Run This System In Your Machine<br>
+<ol>
+<li>Download the repo onto your local computer so you're in possession of all the files.</li>
+<li>Ensure that you have python installed on your machine</li>
+<li>Open your terminal or command line and navigate to the folder IPIMS_Django_Source_Files/ipcms</li>
+<li>Execute the command "sudo pip install -r requirements.txt"</li>
+<li>Once that is complete, run the command "sudo python manage.py makemigrations && python manage.py migrate && python manage.py runserver"</li>
+<li>Open your webbrowser and type in http://localhost:8000</li>
+</ol><br>
+
+In order to login to the admin panel, you need to navigate to http://localhost:8000/admin. The login can be create by opening your terminal to the project directory and typing in python createsuperuser.
+
 
 #<center>Useful Tutorials & Learning Resources</center></br>
 <a href="https://docs.djangoproject.com/en/1.8/intro/tutorial01/">The Polls Tutorial (Written)</a>

@@ -44,7 +44,7 @@ class TempPatientData(models.Model):
 	data_sent = models.IntegerField(default=0)
 
 	def __unicode__(self):
-		return "test"
+		return (str(self.first_name) + " " + str(self.last_name) + " " + str(self.email_address))
 
 
 
@@ -61,7 +61,7 @@ class Patient(models.Model):
 
 class PatientHealthConditions(models.Model):
 
-	# user = models.ForeignKey(Patient, unique=False, blank=True, default="")
+	user = models.ForeignKey(Patient, unique=False, blank=True, default="")
 
 	nausea_level = models.IntegerField(validators=[MinValueValidator(0),
                                        MaxValueValidator(10)], default=0)
@@ -78,7 +78,6 @@ class PatientHealthConditions(models.Model):
 
 	def __unicode__(self):
 		return str(self.user.user.username)
-
 
 #Class for the patients to schedule appointments for their associated doctor
 class PatientAppt(models.Model):

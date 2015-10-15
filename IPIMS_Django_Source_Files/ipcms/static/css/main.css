@@ -13,6 +13,11 @@
 
 /* OVERALL ASPECT */
 
+ul {
+
+    text-align: left;
+}
+
 body {
   background-color: #f2f2f2;
     font-family: "Lato";
@@ -409,4 +414,9 @@ a:after {
     background: #ff7878;
 }
 
+
+.tester {
+
+    color: white;
+}
 

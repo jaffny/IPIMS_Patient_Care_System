@@ -19,6 +19,13 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static 'css/main.css' %}" rel="stylesheet">
+  
+
+    <link href="{% static 'css/card.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/buttons.css' %}" rel="stylesheet">
+    <link href="{% static 'css/textinput.css' %}" rel="stylesheet">
+
 
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -48,9 +55,12 @@
             {% if not user.is_authenticated %}
             <li><a href="/accounts/apply">APPLY</a></li>
             <li><a href="/accounts/login">LOGIN</a></li>
-            {% elif approval == 0 %}
+            {% elif approval == 0 and not user.username == "admin" %}
 
             <li class="active"><a href="/accounts/portal">CHECK APPROVAL STATUS</a></li>
+            <li><a href="/logout">LOGOUT</a></li>
+            {% elif user.username == "admin" %}
+            <li class="active"><a href="/accounts/portal">ADMIN PORTAL</a></li>
             <li><a href="/logout">LOGOUT</a></li>
             {% else %}
             <li class="active"><a href="/accounts/portal">USER PORTAL</a></li>
@@ -62,48 +72,114 @@
     </div>
 
 
-
-	<div class="container w">
-    <h3>Welcome Back, {{ user.username|title }}</h3><hr>
+<br><br>
 
 
-		<div class="row centered">
 
-      {% if approval == 0 %}
+		<div class="row">
+
+      {% if approval == 0 and not user.username == "admin"%}
       <h2>- We Are Still Reviewing Your Application -</h2>
 
       {% else %}
 
-      <h2>Patient Portal</h2><hr>
+      {% if user.username == "admin" %}
+      <h2>Administrative Control Panel</h2><hr>
 
-      {% if not conditions_complete %}
+      {% else %}
+      <h2>{{temp_user_data.first_name}} {{temp_user_data.last_name}}'s {{roles.role|title}} Portal</h2><hr>
+
+      {% endif %}
+
+      {% if not conditions_complete and not user.username == "admin" %}
 
       <h3>Before Continuing Further, please <a href="/health_conditions">add your health conditions..</a></h3>
 
       {% else %}
 
-      <a href="/health_conditions">Update Health Condtions</a><br>
-      <a href="/schedule">Schedule Appointment</a>
 
+      {% if not user.username == "admin" %}
+      <div class="row">
+        <div class="col-sm-4">
+
+<div class="box10">
+  <h5><center>IPIMS Identification Card</center></h5>
+       <h1>{{temp_user_data.first_name}} {{temp_user_data.last_name}}</h1>   
+       <img src="http://www.photocase.com/stock-photos/285467-stock-photo-human-being-man-youth-young-adults-white-adults-face.jpg">
+          <p>
+         <b>E-Mail Address:</b> {{temp_user_data.email}}<br>
+         <b>Address:</b> {{temp_user_data.address}}<br>
+         <b>SSN:</b> ***-**-****</br>
+         <b>Phone Number:</b> {{temp_user_data.phone_number}}<br>
+         <b>DOB: </b>{{temp_user_data.DOB}}<br>
+         <b>Insurance Provider: </b>{{temp_user_data.insurance_provider}}<br>
+         <b>Policy Number:</b> {{temp_user_data.insurance_policy_number}}<br>
+        <p>
+         <b>Allergies:</b>
+       </p>
+            <ul>
+            {% for x in allergens %}
+            <li>{{x}}</li>
+            {% endfor %}
+          </ul>
+        <p>
+         <b>Medical Conditions:</b>
+       </p>
+            <ul>
+            {% for x in med_conditions %}
+            <li>{{x}}</li>
+            {% endfor %}
+          </ul>
+    
+       <br />
+       <b><a href="#">Update Your IPIMS Contact Card</a></b>
+</div>
+
+
+
+        </div>
+        <div class="col-sm-4">
+          <br>
+              <a href="/health_conditions" class="btn">Update Health Conditions</a><br><br>
+              <a href="/health_conditions" class="btn">Update Account Information</a><br><br><hr>
+              <a href="/schedule" class="btn">Schedule Appointment</a><br><br>
+              <a href="/schedule" class="btn">Current Appointments</a><br><br>
+              <a href="/schedule" class="btn">Appointment History</a><br><br><hr>
+              <a href="/schedule" class="btn">My Lab Results</a>
+        </div>
+        <br>
+
+        <a class="btn btn-red" data-toggle="modal" data-target="#myModal">Emergency IPIMS Alert</a>
+
+        </div>
+
+  
+      </div>
+
+      {% endif %}
       {% endif %}
 
       {% endif %}
 
 		</div><!-- row -->
 
-    {% if approval == 0 %}
+    {% if approval == 0 and not user.username == "admin" %}
 
     {% if not temp_user_data.data_sent == 1 %}
-
-      <div class="alert alert-warning">
+    <div class = 'col-md-4'></div>
+      <div class="alert alert-warning col-md-4">
         <strong>Warning!</strong> Your account will not activate until the submission application has been approved by our HSP staff.
       </div>
-
-      <form method ='POST' action=''>
-        {% csrf_token %}
-        {{ form | crispy }}
-      <input type="submit" value="Submit Patient Application" class="btn default col-md-12"/>
-      </form>
+    <br><br><br><br><br><br>
+    <div class = 'col-md-4'></div>
+      <div class = 'col-md-4'>
+        <form method ='POST' action=''>
+          {% csrf_token %}
+          {{ form | crispy }}
+        <input type="submit" value="Submit Patient Application" class="btn default col-md-12"/>
+        </form>
+      </div>
+      <div class = 'col-md-4'></div>
 
     {% else %}
 
@@ -116,10 +192,34 @@
     {% endif %}
   {% endif %}
 		<br>
+</div><!-- container -->
 
-		<br><br>
-	</div><!-- container -->
+<div class = "container">
+  
+  {% if user.username == "admin" %}
 
+    <a href="/health_conditions" class="btn">Register New Employee</a><br><br>
+    <a href="/schedule" class="btn">Remove Employee</a><br><br>
+    <hr>
+    <h3>Search For Patient In Database</h3>
+  <form method="POST" action="/search/">
+      {% csrf_token %}
+
+        <center>
+          <input id="address" type="textbox" placeholder="Search For Patient In Database" class="form-control fixedtest" name="search_data">
+        </center>
+        <span class="input-group-btn">
+          <button class="btn btn-info bigger-width" type="submit" id="addressSearch">Search</button>
+        </span>
+
+       <br><b>- Search Options - </b> <br>
+      <input type="radio" name="db_search_type" value="firstlast" checked="true">    First + Last name</input><br>
+      <input type="radio" name="db_search_type" value="email">    Email Address</input>
+  </form> <br><br>
+
+  {% endif %}
+
+</div>
 
 
 	<div id="r">
@@ -144,12 +244,31 @@
 		</div><!-- container -->
 	</div><!-- Footer -->
 
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
 
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 style="color:Black;"><span class="glyphicon glyphicon-bell"></span> IPIMS Emergency Alert</h4>
+        </div>
+        <div class="modal-body">
+          {{temp_user_data.first_name}} {{temp_user_data.last_name}}<br>
+          PUT INFORMATION HERE FOR EMERGENCY ALERT
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-default btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel Emergency Alert</button>
+
+        </div>
+      </div>
+    </div>
+  </div> 
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
   </body>
 </html>

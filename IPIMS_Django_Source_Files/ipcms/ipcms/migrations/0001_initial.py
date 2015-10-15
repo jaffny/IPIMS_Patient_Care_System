@@ -102,6 +102,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='patient',
+            name='role',
+            field=models.OneToOneField(default=4, to='ipcms.PermissionsRole'),
+        ),
+        migrations.AddField(
+            model_name='patient',
             name='user',
             field=models.OneToOneField(null=True, default=b'', blank=True, to=settings.AUTH_USER_MODEL),
         ),

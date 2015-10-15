@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
+
 )
 
 MIDDLEWARE_CLASSES = (
@@ -100,6 +101,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
+WHOOSH_INDEX = os.path.join(BASE_DIR, 'whoosh/')
 
 STATICFILES_DIRS = (                                                                 
   os.path.join(BASE_DIR, 'static/'),                                                              
