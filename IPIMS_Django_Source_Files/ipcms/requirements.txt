@@ -2,5 +2,3 @@ Django==1.8.5
 django-crispy-forms==1.4.0
 django-phonenumber-field==0.7.2
 phonenumbers==7.1.0
-pyOpenSSL==0.13.1
-python-dateutil==1.5

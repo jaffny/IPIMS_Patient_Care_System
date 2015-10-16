@@ -472,7 +472,6 @@ def DeleteUser(request):
 
 	if request.method == "POST":
 		pk_id = request.POST.get("pk", "")
-		print pk_id
 		if patient_model.objects.filter(id=pk_id).exists():
 			found_patient_object = patient_model.objects.filter(id=pk_id).get()
 			found_patient_object.delete()
