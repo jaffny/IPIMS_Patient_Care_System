@@ -80,7 +80,7 @@ def HomePageView(request):
 	#Assign a default authentication boolean
 	authenticated = False
 
-	approvalSwitch = 0
+	# approvalSwitch = 0
 
 	#Check to see if the user has logged into the system or not
 	if request.user.is_authenticated():
@@ -104,7 +104,10 @@ def HomePageView(request):
 			if (permissionRoleForUser.role in STAFF_APPROVAL_ROLES):
 				approval = 1
 			else:
-				approval = approvalSwitch.approved
+				if patientModel.objects.filter(user__username=request.user.username)[:1].exists():
+					approval = approvalSwitch.approved
+				else:
+					approval = 0
 
 	#Under the instance that the user is not authenticated
 	else:
