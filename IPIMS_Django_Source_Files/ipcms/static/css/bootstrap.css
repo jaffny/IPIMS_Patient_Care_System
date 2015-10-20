@@ -51,6 +51,7 @@ body {
 
 a {
   background: transparent;
+  color: black;
 }
 
 a:focus {
@@ -7056,4 +7057,8 @@ td.visible-print {
   td.hidden-print {
     display: none !important;
   }
+}
+
+a {
+    color :black;
 }

@@ -7,7 +7,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 #This class will also contain the list of names of the doctors who work for the hospital
 class Doctor(models.Model):
-	# doctor_name = models.CharField(max_length=256, choices=[('Dr. Schachte', 'Dr. Schachte'), ('Dr. Schachte', 'Dr. Huffy')], default="DEFAULT")
 	doctor_first_name = models.CharField(max_length=256, default="")
 	doctor_last_name = models.CharField(max_length=256, default="")
 	doctor_type = models.CharField(max_length=256, choices=[('Gynecologist', 'Gynecologist'), ('Neuro', 'Neuro')], default="Select Doctor Type") 
@@ -22,14 +21,11 @@ class PermissionsRole(models.Model):
 	def __unicode__(self):
 		return str(self.role)
 
-
-
 #This is the mediator for the data that is submitted by the user to the HSP staff
 #The data is stored and if the HSP staff approves the patient, then the data will be stored into a patient class
 class TempPatientData(models.Model):
 
 	user = models.ForeignKey(User,unique=True,null=True,default="")
-
 	first_name = models.CharField(max_length=256, default="")
 	last_name = models.CharField(max_length=256, default="")
 	phone_number = PhoneNumberField(blank = True)
@@ -52,9 +48,9 @@ class TempPatientData(models.Model):
 class Patient(models.Model):
 
 	fill_from_application = models.ForeignKey(TempPatientData,unique=True,null=True,default="")
-
 	user = models.OneToOneField(User, unique=True,  blank=True, default="", null=True)
 	approved = models.IntegerField(default=0, null=False)
+	alertSent = models.IntegerField(default=0, null=False)
 
 	def __unicode__(self):
 		return str(self.user)
@@ -94,6 +90,10 @@ class PatientAppt(models.Model):
 		return str(self.doctor)
 
 
-
+#Class that is responsible for housing all of the alerts that are submitted by the user
+class Alert(models.Model):
+	alert_level = models.IntegerField(default=0, null=False)
+	alert_patient = models.OneToOneField(Patient, unique = True, null = True)
+	alert_description = models.CharField(max_length=255, default="", null = True, unique=False)
 
 

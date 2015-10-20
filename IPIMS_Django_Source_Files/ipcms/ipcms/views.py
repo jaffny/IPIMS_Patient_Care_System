@@ -8,14 +8,54 @@ from django.core.urlresolvers import reverse_lazy
 from .forms import RegistrationForm, LoginForm, PatientForm, PatientHealthConditionsForm, TempPatientDataForm
 from django.template import RequestContext
 from django.views.generic import ListView
-from .models import PermissionsRole, Patient, PatientHealthConditions, TempPatientData
+from .models import PermissionsRole, Patient, PatientHealthConditions, TempPatientData, Alert
 from django.shortcuts import render_to_response
 from .forms import PatientApptForm
 from django.template import RequestContext
 from django.shortcuts import render
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 
 
 STAFF_APPROVAL_ROLES = ('admin', 'doctor', 'staff', 'nurse', 'lab')
+
+
+
+def AlertSender(request):
+	#This method should be responsible for sending an alert to the doctor and HSP staff when the patient requests and alert to be sent
+
+
+	print 'inside alert sender'
+	patient_model = Patient.objects.get(user__username=request.user.username)
+	health_conditions_model = PatientHealthConditions.objects.get(user=patient_model)
+	patient_data_information = TempPatientData.objects.get(user__username=request.user.username)
+
+	total_health_condition_level =  (health_conditions_model.nausea_level +
+									health_conditions_model.hunger_level +
+									health_conditions_model.anxiety_level+
+									health_conditions_model.stomach_level+
+									health_conditions_model.body_ache_level+
+									health_conditions_model.chest_pain_level)
+
+	# print 'The current user that is being evaluated is ' + patient_data_information.user.username
+	# print 'The level of the health conditison for total is ' + str(total_health_condition_level)
+
+	#If this is a post method requested by the user, then execute the following logic
+	if request.method == 'POST':
+
+		desc = request.POST.get('desc')
+
+		if desc is None:
+			desc = "NO DESCRIPTION"
+
+		#instantiate an alert model for the user
+		alert_model = Alert(alert_patient = patient_model, alert_description = desc, alert_level = total_health_condition_level)
+		patient_model.alertSent = 1
+		patient_model.save()
+		alert_model.save()
+
+	# return render(request, '/accounts/portal/')
+	return redirect(reverse('Portal'))
 
 '''
 Homepage to display the main control panel or HomePage based on user authentication
@@ -116,7 +156,7 @@ class LoginView(generic.FormView):
 
 def PatientPortalView(request):
 	# template_name = 'home.html'
-
+	print 'CALLING TOP'
 	#Model Definitions & Declarations
 	permissionModel = PermissionsRole
 	patientModel = Patient
@@ -125,6 +165,7 @@ def PatientPortalView(request):
 	conditions_complete = False
 	patient_model = Patient
 	conditions_model = PatientHealthConditions
+	alert_model = Alert
 
 	approvalSwitch = 0
 
@@ -139,15 +180,74 @@ def PatientPortalView(request):
 
 	patient = -1
 
+	total_health_condition_level = 0
+
+
+	#If user has already sent an alert request
+	alert_sent = 0
+
 	#Check to see if the user has logged into the system or not
 	if request.user.is_authenticated():
 
 		if patient_model.objects.filter(user__username=request.user.username)[:1].exists():
 			patient = patient_model.objects.filter(user__username=request.user.username)[:1].get()
+			print 'about to set alert sent'
+			if alert_model.objects.filter(alert_patient=patient)[:1].exists():
+				alert_sent = 1
+				patient.alertSent = 1
+				patient.save()
+			else:
+				alert_sent = patient.alertSent
 
 		if conditions_model.objects.filter(user=patient)[:1].exists():
 			conditions_complete = True
 			patient_conditions = conditions_model.objects.filter(user=patient)[:1].get()
+
+			total_health_condition_level =  (patient_conditions.nausea_level +
+											patient_conditions.hunger_level +
+											patient_conditions.anxiety_level+
+											patient_conditions.stomach_level+
+											patient_conditions.body_ache_level+
+											patient_conditions.chest_pain_level)
+
+
+			if (total_health_condition_level >= 40 and alert_sent == 0 and not alert_model.objects.filter(alert_patient=patient)[:1].exists()):
+				patient.alertSent = 1
+				alert_sent = 1
+				alert_model = Alert(alert_patient = patient, alert_description = 'SENT BY HOSPITAL SYSTEM', alert_level = total_health_condition_level)
+				alert_model.save()
+				patient.save()
+
+			if (total_health_condition_level < 40 and alert_sent == 0):
+				if alert_model.objects.filter(alert_patient=patient)[:1].exists():
+					alert_model = alert_model.objects.filter(alert_patient=patient)[:1].get()
+					alert_model.delete()
+
+			#If there is no alert for the user, set the status to 0
+			if not alert_model.objects.filter(alert_patient=patient)[:1].exists() and patient_model.objects.filter(user__username=request.user.username)[:1].exists():
+				patient.alertSent = 0
+				patient.save()
+
+			#If there health conditions are 
+			if (total_health_condition_level < 40 and alert_sent == 1):
+				if alert_model.objects.filter(alert_patient=patient)[:1].exists():
+					alert_model = alert_model.objects.filter(alert_patient=patient)[:1].get()
+					if alert_model.alert_description == 'SENT BY HOSPITAL SYSTEM':
+						# alert_model = alert_model.objects.filter(alert_patient=patient)[:1].get()
+						alert_model.delete()
+						patient.alertSent = 0
+						patient.save()
+
+			#If there health conditions are 
+			if (total_health_condition_level > 40 and alert_sent == 1 and not alert_model.objects.filter(alert_patient=patient)[:1].exists()):
+				if alert_model.objects.filter(alert_patient=patient)[:1].exists():
+					patient.alertSent = 1
+					alert_sent = 1
+					alert_model = Alert(alert_patient = patient, alert_description = 'SENT BY HOSPITAL SYSTEM', alert_level = total_health_condition_level)
+					alert_model.save()
+					patient.save()
+
+
 
 		#Boolean to ensure valid request authentication
 		authenticated = True
@@ -190,12 +290,9 @@ def PatientPortalView(request):
 			instance.save()
 			return HttpResponseRedirect('formsuccess')
 
-	#Get an array for items for the temp user that can have multiple comma delimited items in the field
-
-
 	#Get an array for allergies
 
-	if not request.user.username == "admin" and approval == 1:
+	if not request.user.username == "admin" and approval == 1 and not permissionRoleForUser.role == 'doctor':
 
 		allergens = tempUserInformation.allergies.split(",")
 		med_conditions = tempUserInformation.medications.split(",")
@@ -205,7 +302,12 @@ def PatientPortalView(request):
 
 
 
-	#Get an array for medical conditions
+	alerts_count = Alert.objects.all().count()
+
+	print str(total_health_condition_level) + " is the current HC level."
+
+	print str(alert_sent) + 'is the current sent alert'
+
 
 	context = {
 
@@ -218,7 +320,9 @@ def PatientPortalView(request):
 		'conditions_complete': conditions_complete,
 		'temp_user_data': tempUserInformation,
 		'allergens': allergens,
-		'med_conditions':med_conditions
+		'med_conditions':med_conditions,
+		'alert_sent':alert_sent,
+		'alerts_count':alerts_count
 	}
 
 	return render(request, 'portal.html', context)
@@ -311,10 +415,7 @@ def PatientSearch(request):
 		search_data = request.POST.get("search_data", "") #store the data of the user search information into a variable that you can parse
 		db_search_type = request.POST.get("db_search_type", "")
 
-
 		search_data_list = search_data.split(" ") #If there is more than one entry in the search bar, parse it as necessary
-
-
 
 		#Check to see if the inputted email matches any of the patient emails in the databases
 		if db_search_type == "email":
@@ -324,7 +425,6 @@ def PatientSearch(request):
 				user_has_been_located = True
 
 		elif db_search_type == "firstlast":
-			print len(search_data_list)
 			if patient_model.objects.filter(fill_from_application__first_name__iexact=search_data_list[0]).exists() and patient_model.objects.filter(fill_from_application__last_name__iexact=search_data_list[1]).exists():
 				patient_found = patient_model.objects.filter(fill_from_application__first_name__iexact=search_data_list[0], fill_from_application__last_name__iexact=search_data_list[1]).all()
 				search_data_list.append(patient_found)
@@ -380,6 +480,54 @@ def DeleteUser(request):
 	}
 
 	return render(request, 'deleted.html', context)
+
+
+
+def EmergencyAlerts(request):
+
+	#Model Definitions & Declarations
+	permissionModel = PermissionsRole
+	patientModel = Patient
+	userModel = User
+	tempModel = TempPatientData
+	conditions_complete = False
+	patient_model = Patient
+	conditions_model = PatientHealthConditions
+	alert_model = Alert
+	
+	#Check to see if the user has logged into the system or not
+	if request.user.is_authenticated():
+
+		#Boolean to ensure valid request authentication
+		authenticated = True
+
+		#Attempt a DB query on the request object
+		if permissionModel.objects.filter(user__username=request.user.username)[:1].exists():
+
+			#If request object from query exists, create a variable assignment on that object
+			permissionRoleForUser = permissionModel.objects.filter(user__username=request.user.username)[:1].get()
+
+			#If the person is a hospital member, then they will automatically be considered approved
+			if (permissionRoleForUser.role in STAFF_APPROVAL_ROLES):
+				approval = 1
+			else:
+				approval = 0
+
+	#Under the instance that the user is not authenticated
+	else:
+		permissionRoleForUser = ""
+
+	alerts_count = Alert.objects.all().count()
+	all_alerts = Alert.objects.all()
+
+	context = {
+
+		'roles': permissionRoleForUser,
+		'alerts_count':alerts_count,
+		'alerts': all_alerts
+	}
+
+	return render(request, 'view_alerts.html', context)
 
 def logout_user(request):
 	logout(request)

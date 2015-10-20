@@ -1675,7 +1675,9 @@ img  {
     opacity: .6; 
 
 }
-
+a {
+    color :black;
+}
 
 .fixedtest {
   width: 330px;

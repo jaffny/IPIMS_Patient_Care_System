@@ -27,12 +27,13 @@ urlpatterns = [
     url(r'accounts/login/$', LoginView.as_view(), name="Login"),
     url(r'^accounts/portal/$', PatientPortalView, name="Portal"),
     url(r'logout/$', logout_user, name="Logout"),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^super/', include(admin.site.urls)),
     url(r'^schedule/$', ScheduleView, name="Schedule"),
     url(r'^health_conditions/$', HealthConditionsView, name="Conditions"),
     url(r'^search/$', PatientSearch, name="PatientSearch"),
     url(r'^delete/$', DeleteUser, name="DeleteUser"),
-
+    url(r'^alert/$', AlertSender, name="Alert"),
+    url(r'^accounts/portal/view_alerts/$', EmergencyAlerts, name="ViewAlerts"),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

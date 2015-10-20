@@ -37,6 +37,8 @@
 
   <body>
 
+
+
     <!-- Fixed navbar -->
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -86,19 +88,22 @@
       {% if user.username == "admin" %}
       <h2>Administrative Control Panel</h2><hr>
 
-      {% else %}
+      {% elif not roles.role == "patient" and not roles.role == "admin" %}
+      <h2>Hospital Control Panel</h2><hr>
+
+      {% elif roles.role == "patient" %}
       <h2>{{temp_user_data.first_name}} {{temp_user_data.last_name}}'s {{roles.role|title}} Portal</h2><hr>
 
       {% endif %}
 
-      {% if not conditions_complete and not user.username == "admin" %}
+      {% if not conditions_complete and not user.username == "admin" and roles.role = "patient" %}
 
       <h3>Before Continuing Further, please <a href="/health_conditions">add your health conditions..</a></h3>
 
       {% else %}
 
 
-      {% if not user.username == "admin" %}
+      {% if roles.role == 'patient' %}
       <div class="row">
         <div class="col-sm-4">
 
@@ -136,7 +141,6 @@
 </div>
 
 
-
         </div>
         <div class="col-sm-4">
           <br>
@@ -149,11 +153,16 @@
         </div>
         <br>
 
-        <a class="btn btn-red" data-toggle="modal" data-target="#myModal">Emergency IPIMS Alert</a>
+        {% if alert_sent == 0 %}
+          <a class="btn btn-red" data-toggle="modal" data-target="#myModal">Emergency IPIMS Alert</a>
+
+          {% else %}
+          <h4><b>Your alert has been sent to the hospital!</b></h4>
+        {% endif %}
 
         </div>
 
-  
+
       </div>
 
       {% endif %}
@@ -219,8 +228,19 @@
 
   {% endif %}
 
-</div>
+  {% if roles.role == "doctor" %}
 
+  <div class = 'col-md-4'>
+  </div>
+  <div class = 'col-md-4'>
+    <h4><b>{{alerts_count}} Emergency Alert(s)!</b></h4>
+    <h5><a href="/accounts/portal/view_alerts">Click To View All Alerts</a></h5>
+  </div>
+  <div class = 'col-md-4'></div>
+
+  {% endif %}
+
+</div>
 
 	<div id="r">
 		<div class="container">
@@ -254,11 +274,26 @@
           <h4 style="color:Black;"><span class="glyphicon glyphicon-bell"></span> IPIMS Emergency Alert</h4>
         </div>
         <div class="modal-body">
-          {{temp_user_data.first_name}} {{temp_user_data.last_name}}<br>
-          PUT INFORMATION HERE FOR EMERGENCY ALERT
+          Hello, {{temp_user_data.first_name}} {{temp_user_data.last_name}}<br>
+
+          If you haven't updated your health conditions, please do so <a href="/health_conditions/">HERE</a><br>
+
+          <form method="POST" action="/alert/">
+            {% csrf_token %}
+          <div class="form-group">
+            <label for="comment">Optional Comments</label>
+            <textarea class="form-control" rows="5" id="comment" name='desc'></textarea>
+          </div>
+
+
+
         </div>
-        <div class="modal-footer">
+          <div class="modal-footer">
           <button type="submit" class="btn btn-default btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel Emergency Alert</button>
+
+          <button type="submit" class="btn btn-default btn-default pull-right"><span class="glyphicon glyphicon-envelope"></span> Send Emergency Alert</button>
+
+          </form>
 
         </div>
       </div>
