@@ -101,7 +101,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='patientappt',
             name='doctor',
-            field=models.OneToOneField(default=-1, to='ipcms.Doctor'),
+            field=models.ForeignKey(default=-1, to='ipcms.Doctor'),
         ),
         migrations.AddField(
             model_name='patientappt',

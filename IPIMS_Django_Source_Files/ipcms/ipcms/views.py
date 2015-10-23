@@ -608,6 +608,34 @@ def ApptView(request):
 
 	return render(request, 'view_appts.html', context)
 
+#Jez added this
+def ApptDataView(request):
+
+	current_appts_list = []
+
+	current_patient = Patient.objects.filter(user=request.user)[:1].get()
+
+	if (PatientAppt.objects.filter(user=current_patient)[:1].exists()):
+		current_appts = PatientAppt.objects.filter(user=current_patient).all()
+		for appts in current_appts:
+			current_appts_list.append(appts)
+
+	#if request.method == "POST":
+	#	date = request.POST.get('date')
+	#	doctor = request.POST.get('doctor')
+	#	pain_level = request.POST.get('pain_level')
+	#	medical_conditions = request.POST.get('medical_conditions')
+	#	allergies = request.POST.get('allergies')
+	#	current_health_conditions = request.POST.get('current_health_conditions')
+	
+
+	context = {
+		'current_appts_list': current_appts_list,
+		'current_patient': current_patient
+	}
+
+	return render(request, 'view_appts_data.html', context)
+
 
 def logout_user(request):
 	logout(request)
