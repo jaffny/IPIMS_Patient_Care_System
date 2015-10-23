@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^delete/$', DeleteUser, name="DeleteUser"),
     url(r'^alert/$', AlertSender, name="Alert"),
     url(r'^accounts/portal/view_alerts/$', EmergencyAlerts, name="ViewAlerts"),
+    url(r'^accounts/portal/update_account/$', UpdateAccountView, name="Update"),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -9,10 +9,10 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 class Doctor(models.Model):
 	doctor_first_name = models.CharField(max_length=256, default="")
 	doctor_last_name = models.CharField(max_length=256, default="")
-	doctor_type = models.CharField(max_length=256, choices=[('Gynecologist', 'Gynecologist'), ('Neuro', 'Neuro')], default="Select Doctor Type") 
+	doctor_type = models.CharField(max_length=256, choices=[('Gynecologist', 'Gynecologist'), ('Neurologist', 'Neurologist'), ('Therapist', 'Therapist'), ('Allergist', 'Allergist'), ('Cardiologist', 'Cardiologist'), ('Dermatologist', 'Dermatologist'), ('Oncologist', 'Oncologist'), ('ENT', 'ENT'), ('Plastic Surgeon', 'Plastic Surgeon'), ('Psychiatrist', 'Psychiatrist'), ('Urologist','Urologist'), ('Podiatrist', 'Podiatrist')], default="Select Doctor Type") 
 	
 	def __unicode__(self):
-		return "Dr. " + str(self.doctor_last_name)
+		return "Dr. " + str(self.doctor_first_name) + ' ' + str(self.doctor_last_name) + ' - ' + str(self.doctor_type)
 
 class PermissionsRole(models.Model):
 	role = models.CharField(max_length=256, choices=[('admin', 'admin'), ('nurse', 'nurse'), ('staff', 'staff'), ('doctor', 'doctor'), ('patient', 'patient'), ('lab', 'lab')])
@@ -25,19 +25,23 @@ class PermissionsRole(models.Model):
 #The data is stored and if the HSP staff approves the patient, then the data will be stored into a patient class
 class TempPatientData(models.Model):
 
-	user = models.ForeignKey(User,unique=True,null=True,default="")
+	user = models.OneToOneField(User,unique=True,null=True,default="")
+	email_address = models.CharField(max_length=256, blank=False)
 	first_name = models.CharField(max_length=256, default="")
 	last_name = models.CharField(max_length=256, default="")
-	phone_number = PhoneNumberField(blank = True)
-	DOB =models.IntegerField(default=0)
-	ssn = models.IntegerField(default=0)
+	age = models.IntegerField(default = 18, blank=False)
+	gender = models.CharField(max_length=256, choices=[('male','Male'), ('female', 'Female'), ('other', 'Other'), ('prefer not to say', 'Prefer Not To Say')], default='Select a gender', blank = False)
+	race = models.CharField(max_length=256, choices=[('white', 'White'), ('american_indian_alaskan_native', 'American Indian or Alaskan Native'),('hawaiian', 'Native Hawaiian or Other Pacific Islander'),('black', 'Black or African American'),('asian', 'Asian'), ('other', 'Other')], default="Other")
+	phone_number = PhoneNumberField(blank = False, default="")
+	DOB = models.DateField(auto_now=False, auto_now_add=False, default="")
+	ssn = models.IntegerField(blank=False)
 	allergies = models.CharField(max_length=256, default="")
 	address = models.CharField(max_length=256, default="")
 	medications = models.CharField(max_length=256, default="")
-	insurance_provider =models.CharField(max_length=256, default="")
-	insurance_policy_number = models.IntegerField(default=0)
-	email_address = models.CharField(max_length = 500, unique=True)
+	insurance_provider =models.CharField(max_length=256, blank=False)
+	insurance_policy_number = models.IntegerField(blank=False)
 	data_sent = models.IntegerField(default=0)
+
 
 	def __unicode__(self):
 		return (str(self.first_name) + " " + str(self.last_name) + " " + str(self.email_address))
@@ -47,7 +51,7 @@ class TempPatientData(models.Model):
 #This patient model will extend the user class so we can add the associated medical data for the user
 class Patient(models.Model):
 
-	fill_from_application = models.ForeignKey(TempPatientData,unique=True,null=True,default="")
+	fill_from_application = models.OneToOneField(TempPatientData,unique=True,null=True,default="")
 	user = models.OneToOneField(User, unique=True,  blank=True, default="", null=True)
 	approved = models.IntegerField(default=0, null=False)
 	alertSent = models.IntegerField(default=0, null=False)
@@ -57,7 +61,7 @@ class Patient(models.Model):
 
 class PatientHealthConditions(models.Model):
 
-	user = models.ForeignKey(Patient, unique=False, blank=True, default="")
+	user = models.OneToOneField(Patient, unique=False, blank=True, default="")
 
 	nausea_level = models.IntegerField(validators=[MinValueValidator(0),
                                        MaxValueValidator(10)], default=0)
@@ -78,13 +82,14 @@ class PatientHealthConditions(models.Model):
 #Class for the patients to schedule appointments for their associated doctor
 class PatientAppt(models.Model):
 	date = models.CharField(max_length=1000, unique=True)
-	doctor = models.ForeignKey(Doctor, unique=False, blank=False, default=-1)
+	doctor = models.OneToOneField(Doctor, unique=False, blank=False, default=-1)
 	pain_level = models.IntegerField(validators=[MinValueValidator(0),
-                                       MaxValueValidator(10)], default=0)
+                                       MaxValueValidator(10)], blank=False)
 	medical_conditions = models.CharField(max_length=1000, default="None")
 	allergies = models.CharField(max_length=1000, default="None")
-	user = models.ForeignKey(Patient, unique=False, blank=True, default="")
-	current_health_conditions = models.ForeignKey(PatientHealthConditions, unique=False, blank=True, default="", null=True)
+	user = models.OneToOneField(Patient, unique=False, blank=True, default="")
+	current_health_conditions = models.OneToOneField(PatientHealthConditions, unique=False, blank=True, default="", null=True)
+	resolved = models.IntegerField(default=0, blank=True)
 
 	def __unicode__(self):
 		return str(self.doctor)

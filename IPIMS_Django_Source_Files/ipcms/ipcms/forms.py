@@ -9,7 +9,7 @@ from django import forms
 class RegistrationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
-        self.fields['username'].label = "Patient Username"
+        self.fields['username'].label = "Patient Email Address"
         self.helper = FormHelper()
         self.helper.layout = Layout(
             'username',
@@ -23,7 +23,7 @@ class RegistrationForm(UserCreationForm):
 class LoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)
-
+        self.fields['username'].label = "Email Address"
         self.helper = FormHelper()
         self.helper.layout = Layout(
             'username',
@@ -45,9 +45,10 @@ class PatientApptForm(forms.ModelForm):
         model = PatientAppt
         widgets = {
         'date': forms.TextInput(attrs={'placeholder': 'Selecting This Textbox Will Enable A Drop Down For Date & Time'}),
+        'pain_level': forms.TextInput(attrs={'placeholder': 'Level Ranges from 0-10'}),
     }
         fields = '__all__'
-        exclude = ['user', 'current_health_conditions']
+        exclude = ['user', 'current_health_conditions', 'resolved']
 
 
 class PatientHealthConditionsForm(forms.ModelForm):
@@ -60,5 +61,16 @@ class PatientHealthConditionsForm(forms.ModelForm):
 class TempPatientDataForm(forms.ModelForm):
     class Meta:
         model = TempPatientData
+        widgets = {
+            'first_name': forms.TextInput(attrs={'placeholder': 'Legal First Name'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'Legal Last Name'}),
+            'phone_number': forms.TextInput(attrs={'placeholder': '+1(areacode)(phone-number)'}),
+            'DOB': forms.TextInput(attrs={'placeholder': '01/01/2000'}),
+            'ssn': forms.TextInput(attrs={'placeholder': '111223333'}),
+            'allergies': forms.TextInput(attrs={'placeholder': 'Separate your allergies by commas'}),
+            'medications': forms.TextInput(attrs={'placeholder': 'Separate your medications by commas'}),
+            'insurance_policy_number': forms.TextInput(attrs={'placeholder': 'Valid Insurance Required'}),
+
+        }
         fields = '__all__'
-        exclude = ['user', 'data_sent']
+        exclude = ['user', 'data_sent', 'email_address']

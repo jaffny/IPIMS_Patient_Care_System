@@ -64,6 +64,7 @@ Homepage to display the main control panel or HomePage based on user authenticat
 def HomePageView(request):
 
 
+
 	#Model Definitions & Declarations
 	permissionModel = PermissionsRole
 	patientModel = Patient
@@ -159,7 +160,6 @@ class LoginView(generic.FormView):
 
 def PatientPortalView(request):
 	# template_name = 'home.html'
-	print 'CALLING TOP'
 	#Model Definitions & Declarations
 	permissionModel = PermissionsRole
 	patientModel = Patient
@@ -195,7 +195,7 @@ def PatientPortalView(request):
 		if patient_model.objects.filter(user__username=request.user.username)[:1].exists():
 			patient = patient_model.objects.filter(user__username=request.user.username)[:1].get()
 			print 'about to set alert sent'
-			if alert_model.objects.filter(alert_patient=patient)[:1].exists():
+			if Alert.objects.filter(alert_patient=patient)[:1].exists():
 				alert_sent = 1
 				patient.alertSent = 1
 				patient.save()
@@ -214,7 +214,7 @@ def PatientPortalView(request):
 											patient_conditions.chest_pain_level)
 
 
-			if (total_health_condition_level >= 40 and alert_sent == 0 and not alert_model.objects.filter(alert_patient=patient)[:1].exists()):
+			if (total_health_condition_level >= 40 and alert_sent == 0 and not Alert.objects.filter(alert_patient=patient)[:1].exists()):
 				patient.alertSent = 1
 				alert_sent = 1
 				alert_model = Alert(alert_patient = patient, alert_description = 'SENT BY HOSPITAL SYSTEM', alert_level = total_health_condition_level)
@@ -222,19 +222,19 @@ def PatientPortalView(request):
 				patient.save()
 
 			if (total_health_condition_level < 40 and alert_sent == 0):
-				if alert_model.objects.filter(alert_patient=patient)[:1].exists():
-					alert_model = alert_model.objects.filter(alert_patient=patient)[:1].get()
+				if Alert.objects.filter(alert_patient=patient)[:1].exists():
+					alert_model = Alert.objects.filter(alert_patient=patient)[:1].get()
 					alert_model.delete()
 
 			#If there is no alert for the user, set the status to 0
-			if not alert_model.objects.filter(alert_patient=patient)[:1].exists() and patient_model.objects.filter(user__username=request.user.username)[:1].exists():
+			if not Alert.objects.filter(alert_patient=patient)[:1].exists() and patient_model.objects.filter(user__username=request.user.username)[:1].exists():
 				patient.alertSent = 0
 				patient.save()
 
 			#If there health conditions are 
 			if (total_health_condition_level < 40 and alert_sent == 1):
-				if alert_model.objects.filter(alert_patient=patient)[:1].exists():
-					alert_model = alert_model.objects.filter(alert_patient=patient)[:1].get()
+				if Alert.objects.filter(alert_patient=patient)[:1].exists():
+					alert_model = Alert.objects.filter(alert_patient=patient)[:1].get()
 					if alert_model.alert_description == 'SENT BY HOSPITAL SYSTEM':
 						# alert_model = alert_model.objects.filter(alert_patient=patient)[:1].get()
 						alert_model.delete()
@@ -242,8 +242,8 @@ def PatientPortalView(request):
 						patient.save()
 
 			#If there health conditions are 
-			if (total_health_condition_level > 40 and alert_sent == 1 and not alert_model.objects.filter(alert_patient=patient)[:1].exists()):
-				if alert_model.objects.filter(alert_patient=patient)[:1].exists():
+			if (total_health_condition_level > 40 and alert_sent == 1 and not Alert.objects.filter(alert_patient=patient)[:1].exists()):
+				if Alert.objects.filter(alert_patient=patient)[:1].exists():
 					patient.alertSent = 1
 					alert_sent = 1
 					alert_model = Alert(alert_patient = patient, alert_description = 'SENT BY HOSPITAL SYSTEM', alert_level = total_health_condition_level)
@@ -290,6 +290,7 @@ def PatientPortalView(request):
 			instance = form.save(commit=False)
 			instance.user = request.user
 			instance.data_sent = 1
+			instance.email_address = request.user.username
 			instance.save()
 			return HttpResponseRedirect('formsuccess')
 
@@ -394,6 +395,7 @@ def HealthConditionsView(request):
 			instance.user = patient
 			instance.save()
 			return HttpResponseRedirect('formsuccess')
+
 
 	context = {
 		"form": form,
@@ -531,6 +533,62 @@ def EmergencyAlerts(request):
 	}
 
 	return render(request, 'view_alerts.html', context)
+
+
+#This is the view that is going to be used to update the account information for the user
+def UpdateAccountView(request):
+	title = "Update Account Information"
+	form = TempPatientDataForm(request.POST or None)
+	patient_model = Patient
+
+	patient = patient_model.objects.filter(user=request.user)[:1].get()
+
+	if (TempPatientData.objects.filter(user=request.user)[:1].exists()):
+
+		instance = TempPatientData.objects.filter(user=request.user)[:1].get()
+		form = TempPatientDataForm(instance = instance)
+
+	if request.method == "POST":
+
+		TPD = TempPatientData.objects.filter(user=request.user)[:1].get()
+
+		if (not TPD is None):
+			instance = TempPatientData.objects.filter(user=request.user)[:1].get()
+
+			# form = TempPatientDataForm(request.POST, instance = instance)
+
+		form = TempPatientDataForm(request.POST, instance = TPD)
+		if form.is_valid():
+
+			form.save()
+		else:
+			print form.errors
+		return HttpResponseRedirect('/accounts/portal/update_account/')
+
+
+	context = {
+		"form": form,
+		"template_title": title
+	}
+	return render(request, 'update_account.html', context)
+
+def CreateEmployeeView(request):
+
+	#Grab the post parameters for the following data
+
+	if request.method == "POST":
+		user_name = request.POST.get('username')
+		password = request.POST.get('password')
+		staff_type = request.POST.get('staff_type')
+		role = request.POST.get('role')
+
+	user_model = User
+
+	#email
+	#password
+	#type of doctor
+	#role of the person
+
 
 def logout_user(request):
 	logout(request)

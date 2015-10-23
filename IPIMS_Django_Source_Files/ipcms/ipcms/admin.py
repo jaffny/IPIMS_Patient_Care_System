@@ -12,7 +12,7 @@ class PermissionsRoleAdmin(admin.ModelAdmin):
 	list_display = ('user', 'role')
 
 class DoctorAdmin(admin.ModelAdmin):
-	list_display = ('doctor_first_name', 'doctor_last_name')
+	list_display = ('doctor_first_name', 'doctor_last_name', 'doctor_type')
 
 class PatientHealthConditionsAdmin(admin.ModelAdmin):
 	form = PatientHealthConditionsForm

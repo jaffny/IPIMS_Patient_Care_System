@@ -15,12 +15,20 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='Alert',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('alert_level', models.IntegerField(default=0)),
+                ('alert_description', models.CharField(default=b'', max_length=255, null=True)),
+            ],
+        ),
+        migrations.CreateModel(
             name='Doctor',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('doctor_first_name', models.CharField(default=b'', max_length=256)),
                 ('doctor_last_name', models.CharField(default=b'', max_length=256)),
-                ('doctor_type', models.CharField(default=b'Select Doctor Type', max_length=256, choices=[(b'Gynecologist', b'Gynecologist'), (b'Neuro', b'Neuro')])),
+                ('doctor_type', models.CharField(default=b'Select Doctor Type', max_length=256, choices=[(b'Gynecologist', b'Gynecologist'), (b'Neurologist', b'Neurologist'), (b'Therapist', b'Therapist'), (b'Allergist', b'Allergist'), (b'Cardiologist', b'Cardiologist'), (b'Dermatologist', b'Dermatologist'), (b'Oncologist', b'Oncologist'), (b'ENT', b'ENT'), (b'Plastic Surgeon', b'Plastic Surgeon'), (b'Psychiatrist', b'Psychiatrist'), (b'Urologist', b'Urologist'), (b'Podiatrist', b'Podiatrist')])),
             ],
         ),
         migrations.CreateModel(
@@ -28,6 +36,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('approved', models.IntegerField(default=0)),
+                ('alertSent', models.IntegerField(default=0)),
             ],
         ),
         migrations.CreateModel(
@@ -35,9 +44,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('date', models.CharField(unique=True, max_length=1000)),
-                ('pain_level', models.IntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
+                ('pain_level', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
                 ('medical_conditions', models.CharField(default=b'None', max_length=1000)),
                 ('allergies', models.CharField(default=b'None', max_length=1000)),
+                ('resolved', models.IntegerField(default=0, blank=True)),
             ],
         ),
         migrations.CreateModel(
@@ -50,7 +60,7 @@ class Migration(migrations.Migration):
                 ('stomach_level', models.IntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
                 ('body_ache_level', models.IntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
                 ('chest_pain_level', models.IntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('user', models.ForeignKey(default=b'', blank=True, to='ipcms.Patient')),
+                ('user', models.OneToOneField(default=b'', blank=True, to='ipcms.Patient')),
             ],
         ),
         migrations.CreateModel(
@@ -65,49 +75,52 @@ class Migration(migrations.Migration):
             name='TempPatientData',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('email_address', models.CharField(max_length=256)),
                 ('first_name', models.CharField(default=b'', max_length=256)),
                 ('last_name', models.CharField(default=b'', max_length=256)),
-                ('phone_number', phonenumber_field.modelfields.PhoneNumberField(max_length=128, blank=True)),
-                ('DOB', models.IntegerField(default=0)),
-                ('ssn', models.IntegerField(default=0)),
+                ('age', models.IntegerField(default=18)),
+                ('gender', models.CharField(default=b'Select a gender', max_length=256, choices=[(b'male', b'Male'), (b'female', b'Female'), (b'other', b'Other'), (b'prefer not to say', b'Prefer Not To Say')])),
+                ('race', models.CharField(default=b'Other', max_length=256, choices=[(b'white', b'White'), (b'american_indian_alaskan_native', b'American Indian or Alaskan Native'), (b'hawaiian', b'Native Hawaiian or Other Pacific Islander'), (b'black', b'Black or African American'), (b'asian', b'Asian'), (b'other', b'Other')])),
+                ('phone_number', phonenumber_field.modelfields.PhoneNumberField(default=b'', max_length=128)),
+                ('DOB', models.DateField(default=b'')),
+                ('ssn', models.IntegerField()),
                 ('allergies', models.CharField(default=b'', max_length=256)),
                 ('address', models.CharField(default=b'', max_length=256)),
                 ('medications', models.CharField(default=b'', max_length=256)),
-                ('insurance_provider', models.CharField(default=b'', max_length=256)),
-                ('insurance_policy_number', models.IntegerField(default=0)),
-                ('email_address', models.CharField(unique=True, max_length=500)),
+                ('insurance_provider', models.CharField(max_length=256)),
+                ('insurance_policy_number', models.IntegerField()),
                 ('data_sent', models.IntegerField(default=0)),
-                ('user', models.ForeignKey(null=True, default=b'', to=settings.AUTH_USER_MODEL, unique=True)),
+                ('user', models.OneToOneField(null=True, default=b'', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.AddField(
             model_name='patientappt',
             name='current_health_conditions',
-            field=models.ForeignKey(default=b'', blank=True, to='ipcms.PatientHealthConditions', null=True),
+            field=models.OneToOneField(null=True, default=b'', blank=True, to='ipcms.PatientHealthConditions'),
         ),
         migrations.AddField(
             model_name='patientappt',
             name='doctor',
-            field=models.ForeignKey(default=-1, to='ipcms.Doctor'),
+            field=models.OneToOneField(default=-1, to='ipcms.Doctor'),
         ),
         migrations.AddField(
             model_name='patientappt',
             name='user',
-            field=models.ForeignKey(default=b'', blank=True, to='ipcms.Patient'),
+            field=models.OneToOneField(default=b'', blank=True, to='ipcms.Patient'),
         ),
         migrations.AddField(
             model_name='patient',
             name='fill_from_application',
-            field=models.ForeignKey(null=True, default=b'', to='ipcms.TempPatientData', unique=True),
-        ),
-        migrations.AddField(
-            model_name='patient',
-            name='role',
-            field=models.OneToOneField(default=4, to='ipcms.PermissionsRole'),
+            field=models.OneToOneField(null=True, default=b'', to='ipcms.TempPatientData'),
         ),
         migrations.AddField(
             model_name='patient',
             name='user',
             field=models.OneToOneField(null=True, default=b'', blank=True, to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='alert',
+            name='alert_patient',
+            field=models.OneToOneField(null=True, to='ipcms.Patient'),
         ),
     ]
