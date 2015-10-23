@@ -1,0 +1,26 @@
+{% extends '_layouts/base.html' %}
+
+{% block content %}
+
+<center><h1>Emergency Alerts Page</h1></center>
+
+{% if user.is_authenticated and roles.role == "doctor" or roles.role == "hsp" %}
+
+<h4><b>{{alerts_count}} Emergency Alert(s)!</b></h4>
+<hr>
+{% for alert in alerts %}
+
+	<!-- <h4><i>{{alert.alert_patient.user.username|title}} has an alert level of {{alert.alert_level}}!</i></h4> -->
+
+<div class="alert alert-danger">
+  {{alert.alert_patient.user.username|title}} has an alert level of {{alert.alert_level}}!<br>
+  Description: {{alert.alert_description}}
+   <br><a href="#">Click To View Patient Case</a><br>
+</div>
+
+
+{% endfor %}
+
+{% endif %}
+
+{% endblock %}
