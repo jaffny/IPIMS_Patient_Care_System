@@ -5,7 +5,7 @@ from .models import Patient, PatientAppt, PermissionsRole, Doctor, PatientHealth
 
 #Add custom columns to appear inside of the database for the user
 class PatientApptAdmin(admin.ModelAdmin):
-	list_display = ('user', 'doctor', 'date')
+	list_display = ('user', 'doctor', 'date', 'resolved')
 	form = PatientApptForm
 
 class PermissionsRoleAdmin(admin.ModelAdmin):

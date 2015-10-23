@@ -12,7 +12,7 @@ class Doctor(models.Model):
 	doctor_type = models.CharField(max_length=256, choices=[('Gynecologist', 'Gynecologist'), ('Neurologist', 'Neurologist'), ('Therapist', 'Therapist'), ('Allergist', 'Allergist'), ('Cardiologist', 'Cardiologist'), ('Dermatologist', 'Dermatologist'), ('Oncologist', 'Oncologist'), ('ENT', 'ENT'), ('Plastic Surgeon', 'Plastic Surgeon'), ('Psychiatrist', 'Psychiatrist'), ('Urologist','Urologist'), ('Podiatrist', 'Podiatrist')], default="Select Doctor Type") 
 	
 	def __unicode__(self):
-		return "Dr. " + str(self.doctor_first_name) + ' ' + str(self.doctor_last_name) + ' - ' + str(self.doctor_type)
+		return "Dr. " + str(self.doctor_first_name.title()) + ' ' + str(self.doctor_last_name.title()) + ' - ' + str(self.doctor_type.title())
 
 class PermissionsRole(models.Model):
 	role = models.CharField(max_length=256, choices=[('admin', 'admin'), ('nurse', 'nurse'), ('staff', 'staff'), ('doctor', 'doctor'), ('patient', 'patient'), ('lab', 'lab')])
@@ -82,13 +82,13 @@ class PatientHealthConditions(models.Model):
 #Class for the patients to schedule appointments for their associated doctor
 class PatientAppt(models.Model):
 	date = models.CharField(max_length=1000, unique=True)
-	doctor = models.OneToOneField(Doctor, unique=False, blank=False, default=-1)
+	doctor = models.ForeignKey(Doctor, unique=False, default=-1)
 	pain_level = models.IntegerField(validators=[MinValueValidator(0),
                                        MaxValueValidator(10)], blank=False)
 	medical_conditions = models.CharField(max_length=1000, default="None")
 	allergies = models.CharField(max_length=1000, default="None")
-	user = models.OneToOneField(Patient, unique=False, blank=True, default="")
-	current_health_conditions = models.OneToOneField(PatientHealthConditions, unique=False, blank=True, default="", null=True)
+	user = models.ForeignKey(Patient, unique=False, blank=True, default="")
+	current_health_conditions = models.ForeignKey(PatientHealthConditions, unique=False, blank=True, default="", null=True)
 	resolved = models.IntegerField(default=0, blank=True)
 
 	def __unicode__(self):

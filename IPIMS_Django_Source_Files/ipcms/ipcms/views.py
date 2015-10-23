@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse_lazy
 from .forms import RegistrationForm, LoginForm, PatientForm, PatientHealthConditionsForm, TempPatientDataForm
 from django.template import RequestContext
 from django.views.generic import ListView
-from .models import PermissionsRole, Patient, PatientHealthConditions, TempPatientData, Alert
+from .models import PermissionsRole, Patient, PatientHealthConditions, TempPatientData, Alert,PatientAppt
 from django.shortcuts import render_to_response
 from .forms import PatientApptForm
 from django.template import RequestContext
@@ -583,10 +583,30 @@ def CreateEmployeeView(request):
 
 	user_model = User
 
-	#email
-	#password
-	#type of doctor
-	#role of the person
+#This view is responsible for quering all the currently existent appts for a user in the database and displaying the data to the page
+def ApptView(request):
+
+	current_appts_list = []
+
+
+	#First you need to get the current patient to associate the patient with the appts
+	current_patient = Patient.objects.filter(user=request.user)[:1].get()
+
+	#Now you need to find all the appts that are associated with the current user who is logged in
+	if (PatientAppt.objects.filter(user=current_patient)[:1].exists()):
+		current_appts = PatientAppt.objects.filter(user=current_patient).all()
+		for appts in current_appts:
+			current_appts_list.append(appts)
+
+
+	context = {
+
+		'current_appts_list': current_appts_list,
+		'current_patient': current_patient
+
+	}
+
+	return render(request, 'view_appts.html', context)
 
 
 def logout_user(request):

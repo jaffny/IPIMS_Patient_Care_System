@@ -48,7 +48,7 @@ class PatientApptForm(forms.ModelForm):
         'pain_level': forms.TextInput(attrs={'placeholder': 'Level Ranges from 0-10'}),
     }
         fields = '__all__'
-        exclude = ['user', 'current_health_conditions', 'resolved']
+        exclude = ['user', 'current_health_conditions']
 
 
 class PatientHealthConditionsForm(forms.ModelForm):

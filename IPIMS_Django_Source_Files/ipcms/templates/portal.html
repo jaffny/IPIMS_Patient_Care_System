@@ -110,7 +110,8 @@
 <div class="box10">
   <h5><center>IPIMS Identification Card</center></h5>
        <h1>{{temp_user_data.first_name|title}} {{temp_user_data.last_name|title}}</h1>   
-       <img src="http://www.photocase.com/stock-photos/285467-stock-photo-human-being-man-youth-young-adults-white-adults-face.jpg">
+       <img src="http://4.bp.blogspot.com/-zsbDeAUd8aY/US7F0ta5d9I/AAAAAAAAEKY/UL2AAhHj6J8/s1600/facebook-default-no-profile-pic.jpg"><br>
+       <a href="#">Click Here To Change/Update Profile Photo</a>
           <p>
          <b>E-Mail Address:</b> {{temp_user_data.email}}<br>
          <b>Address:</b> {{temp_user_data.address}}<br>
@@ -137,31 +138,35 @@
           </ul>
     
        <br />
-       <b><a href="#">Update Your IPIMS Contact Card</a></b>
+       <b><a href="/accounts/portal/update_account/">Update Your IPIMS Contact Card</a></b>
 </div>
 
 
         </div>
         <div class="col-sm-4">
           <br>
+              <h3>Personal Information</h3><br>
               <a href="/health_conditions" class="btn">Update Health Conditions</a><br><br>
               <a href="/accounts/portal/update_account/" class="btn">Update Account Information</a><br><br><hr>
+              <h3>Appointment Information</h3><br>
               <a href="/schedule" class="btn">Schedule Appointment</a><br><br>
-              <a href="/schedule" class="btn">Current Appointments</a><br><br>
+              <a href="/accounts/portal/view_appts/" class="btn">Current Appointments</a><br><br>
               <a href="/schedule" class="btn">Appointment History</a><br><br><hr>
+              <h3>Lab Results Information</h3><br>
               <a href="/schedule" class="btn">My Lab Results</a>
         </div>
         <br>
 
+        <h3>Emergency/Other Information</h3><br>
         {% if alert_sent == 0 %}
-          <a class="btn btn-red" data-toggle="modal" data-target="#myModal">Emergency IPIMS Alert</a>
+          <a class="btn btn-red" data-toggle="modal" data-target="#myModal">Emergency IPIMS Alert</a><br><br>
+          <a class="btn btn-blue">Help &amp; FAQ'S</a>
 
           {% else %}
           <h4><b>Your alert has been sent to the hospital!</b></h4>
         {% endif %}
 
         </div>
-
 
       </div>
 
@@ -207,8 +212,11 @@
   
   {% if user.username == "admin" %}
 
+    <a href="#" class="btn">Create Approved Patient</a><br><br>
     <a href="/health_conditions" class="btn">Register New Employee</a><br><br>
     <a href="/schedule" class="btn">Remove Employee</a><br><br>
+    <a href="#" class="btn">View All Patients</a><br><br>
+    <a href="#" class="btn">View All Employees</a><br><br>
     <hr>
     <h3>Search For Patient In Database</h3>
   <form method="POST" action="/search/">
