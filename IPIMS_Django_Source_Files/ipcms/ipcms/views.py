@@ -298,8 +298,11 @@ def PatientPortalView(request):
 
 	if not request.user.username == "admin" and approval == 1 and not permissionRoleForUser.role == 'doctor':
 
-		allergens = tempUserInformation.allergies.split(",")
-		med_conditions = tempUserInformation.medications.split(",")
+		if tempUserInformation.allergies is not None:
+			allergens = tempUserInformation.allergies.split(",")
+
+		if tempUserInformation.medications is not None:
+			med_conditions = tempUserInformation.medications.split(",")
 	else:
 		allergens = ""
 		med_conditions =""
@@ -485,8 +488,6 @@ def DeleteUser(request):
 
 	return render(request, 'deleted.html', context)
 
-
-
 def EmergencyAlerts(request):
 
 	#Model Definitions & Declarations
@@ -588,7 +589,6 @@ def ApptView(request):
 
 	current_appts_list = []
 
-
 	#First you need to get the current patient to associate the patient with the appts
 	current_patient = Patient.objects.filter(user=request.user)[:1].get()
 
@@ -598,7 +598,6 @@ def ApptView(request):
 		for appts in current_appts:
 			current_appts_list.append(appts)
 
-
 	context = {
 
 		'current_appts_list': current_appts_list,
@@ -607,7 +606,6 @@ def ApptView(request):
 	}
 
 	return render(request, 'view_appts.html', context)
-
 
 def logout_user(request):
 	logout(request)

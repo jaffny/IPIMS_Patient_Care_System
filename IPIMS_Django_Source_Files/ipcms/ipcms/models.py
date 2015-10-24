@@ -46,8 +46,6 @@ class TempPatientData(models.Model):
 	def __unicode__(self):
 		return (str(self.first_name) + " " + str(self.last_name) + " " + str(self.email_address))
 
-
-
 #This patient model will extend the user class so we can add the associated medical data for the user
 class Patient(models.Model):
 

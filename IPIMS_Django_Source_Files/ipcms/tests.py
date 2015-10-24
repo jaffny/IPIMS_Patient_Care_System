@@ -247,7 +247,6 @@ class TestingPatientAlertSystem(TestCase):
 		self.assertEqual(patient_object.user.username, 'johnson')
 
 		patient_object.save()
-
 		
 		alert_object = Alert.objects.create()
 		alert_object.alert_level = 40
