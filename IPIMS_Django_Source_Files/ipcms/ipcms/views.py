@@ -628,6 +628,9 @@ def ApptDataView(request):
 	#	allergies = request.POST.get('allergies')
 	#	current_health_conditions = request.POST.get('current_health_conditions')
 	
+	#use Schedule view to change/edit information
+			#ex: this is your current info
+			# insert new info here to replace old info
 
 	context = {
 		'current_appts_list': current_appts_list,
