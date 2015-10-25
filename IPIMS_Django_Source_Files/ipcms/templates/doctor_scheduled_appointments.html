@@ -1,0 +1,46 @@
+
+{% extends '_layouts/base.html' %}
+{% load staticfiles %}
+{% load static %}
+
+{% block extension %}
+<link href="{% static 'css/displaybox.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+
+{% block content %}
+
+	{% if user.is_authenticated and roles.role == "doctor" or roles.role == "hsp" %}
+
+		<hr>
+		<center><h1>Currently Scheduled Appointments For Dr. {{current_doctor.doctor_first_name}} {{current_doctor.doctor_last_name}}</h1></center>
+		<hr>
+
+		{% for appts in relevant_appts %}
+		<div class = "row" id = "pullleft">
+			<div class="wrap"><br><br>
+			  <span class="horiz-flag noise "> <h1 id ="box">Patient: {{appts.user.fill_from_application.first_name}} {{appts.user.fill_from_application.last_name}}</h1></span>
+			   <p>
+			         <hr><b>Patient Name:</b> {{appts.user.fill_from_application.first_name}} {{appts.user.fill_from_application.last_name}}<hr>
+			         <b>Patient Pain Level:</b> {{appts.pain_level}} <hr>
+			         <b>Patient Appointment Summary:</b>  {{appts.medical_conditions}} <hr>
+			         <b>Patient Allergies:</b> {{appts.allergies}} <hr>
+
+			      <h3>Case Resolved?</h3>
+
+					<div class="slideThree">	
+						<input type="checkbox" value="None" id="slideThree" name="check" />
+						<label for="slideThree"></label>
+					</div>
+
+			   </p> 
+			   <br />
+			</div>
+		</div>
+
+		{% endfor %}
+
+	{% endif %}
+
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends '_layouts/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+
+{% if user.is_authenticated %}
+<hr>
+{% if roles.role == 'doctor' %}
+<center><h1>View My Patients</h1></center>
+{% elif roles.role == 'hsp' %}
+<center><h1>View All Patients</h1></center>
+{% endif %}
+<hr>
+
+
+{% if patients == 0 %}
+
+<h2>You Don't Currently Have Patients</h2>
+
+{% else %}
+<center>
+	{% for patient in patients %}
+	<div class="row">
+ 	<div class = 'col-md-2'></div>
+	  <div class = 'col-md-8'>
+			<div class="alert alert-info">
+			    <h3>{{patient.user.fill_from_application.first_name|title}} {{patient.user.fill_from_application.last_name|title}}</h3>
+
+			    <hr>
+			       <form action = "/accounts/portal/update_account/" method="POST">
+			       	{% csrf_token %}
+			       	<input type="hidden" name="pk" value="{{patient.id}}">
+			       	<button type="submit" onclick="return confirm('Confirm Page Leave?')">Edit Patient Info</button>
+			       </form>
+			    <hr>			       
+			    <form action = "/accounts/portal/update_account/" method="POST">
+			       	{% csrf_token %}
+			       	<input type="hidden" name="pk" value="{{patient.id}}">
+			       	<button type="submit" onclick="return confirm('Confirm Page Leave?')">View Patient Appointments</button>
+			       </form>
+			    <hr>
+			       <form action = "/accounts/portal/update_account/" method="POST">
+			       	{% csrf_token %}
+			       	<input type="hidden" name="pk" value="{{patient.id}}">
+			       	<button type="submit" onclick="return confirm('Confirm Page Leave?')">View Patient Lab Records</button>
+			       </form>
+			    <hr>
+			       <form action = "/delete/" method="POST">
+			       	{% csrf_token %}
+			       	<input type="hidden" name="pk" value="{{patient.id}}">
+			       	<button type="submit" onclick="return confirm('Are you sure you want to delete {{patient.user.fill_from_application.first_name|title}} {{patient.user.fill_from_application.last_name|title}}?')">Delete {{patient.user.fill_from_application.first_name|title}} {{patient.user.fill_from_application.last_name|title}}</button>
+			       </form>
+			</div>
+	  </div>
+	<div class = 'col-md-2'></div>
+	</div>
+	{% endfor %}
+</center>
+
+{% endif %}
+
+
+
+{% endif %}
+
+
+
+{% endblock %}

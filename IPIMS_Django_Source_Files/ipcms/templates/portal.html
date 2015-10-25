@@ -65,7 +65,13 @@
             <li class="active"><a href="/accounts/portal">ADMIN PORTAL</a></li>
             <li><a href="/logout">LOGOUT</a></li>
             {% else %}
-            <li class="active"><a href="/accounts/portal">USER PORTAL</a></li>
+              {% if not roles.role == "patient" %}
+              <li class="active"><a href="/accounts/portal">HOSPITAL PORTAL</a></li>
+
+              {% else %}
+              <li class="active"><a href="/accounts/portal">PATIENT PORTAL</a></li>
+
+              {% endif %}
             <li><a href="/logout">LOGOUT</a></li>
             {% endif %}
           </ul>
@@ -87,6 +93,9 @@
 
       {% if user.username == "admin" %}
       <h2>Administrative Control Panel</h2><hr>
+
+      {% elif roles.role == "doctor" %}
+      <h2>Doctor Control Panel</h2><h3>Welcome Dr. {{doc_name}}</h3><hr>
 
       {% elif not roles.role == "patient" and not roles.role == "admin" %}
       <h2>Hospital Control Panel</h2><hr>
@@ -164,6 +173,7 @@
 
           {% else %}
           <h4><b>Your alert has been sent to the hospital!</b></h4>
+          <a class="btn btn-blue">Help &amp; FAQ'S</a>
         {% endif %}
 
         </div>
@@ -241,10 +251,30 @@
   <div class = 'col-md-4'>
   </div>
   <div class = 'col-md-4'>
-    <h4><b>{{alerts_count}} Emergency Alert(s)!</b></h4>
-<!--     <h5><a href="/accounts/portal/view_alerts">Click To View All Alerts</a></h5> -->
-    <a href="/accounts/portal/view_alerts" class="btn">Click To View All Alerts</a><br><br>
+    <a href="/accounts/portal/view_alerts" class="btn btn-red">Click To View All Alerts<br><i>{{alerts_count}} Emergency Alert(s)!</i></a><br><br>
+    <a href="/accounts/portal/admin/scheduled_appts" class="btn">View Scheduled Appointments<br><i>{{appts}} Queued!</i></a><br><br>
+    <a href="/accounts/portal/admin/view_patients" class="btn">View My Patients</a><br><br>
+    <a href="/accounts/portal/admin/generate" class="btn">E-Prescribe Medication</a><br><br>
+    <a href="/accounts/portal/admin/generate" class="btn">View Lab Reports</a><br><br>
     <a href="/accounts/portal/admin/generate" class="btn">Generate Stats Report</a><br><br>
+
+
+ <h3>Search For Patient In Database</h3>
+  <form method="POST" action="/search/">
+      {% csrf_token %}
+
+        <center>
+          <input id="address" type="textbox" placeholder="Search For Patient In Database" class="form-control fixedtest" name="search_data">
+        </center>
+        <span class="input-group-btn">
+          <button class="btn btn-info bigger-width" type="submit" id="addressSearch">Search</button>
+        </span>
+
+       <br><b>- Search Options - </b> <br>
+      <input type="radio" name="db_search_type" value="firstlast" checked="true">    First + Last name</input><br>
+      <input type="radio" name="db_search_type" value="email">    Email Address</input>
+  </form> <br><br>
+
   </div>
   <div class = 'col-md-4'></div>
 
@@ -294,8 +324,6 @@
             <label for="comment">Optional Comments</label>
             <textarea class="form-control" rows="5" id="comment" name='desc'></textarea>
           </div>
-
-
 
         </div>
           <div class="modal-footer">

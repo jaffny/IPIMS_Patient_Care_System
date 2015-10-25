@@ -37,6 +37,8 @@ urlpatterns = [
     url(r'^accounts/portal/update_account/$', UpdateAccountView, name="Update"),
     url(r'^accounts/portal/view_appts/$', ApptView, name="ViewAppts"),
     url(r'^accounts/portal/admin/generate$', GenerateStatsView, name="GenerateStats"),
+    url(r'^accounts/portal/admin/view_patients$', PatientDataView, name="PatientDataView"),
+    url(r'^accounts/portal/admin/scheduled_appts$', ScheduledDoctorAppointments, name="ScheduledDoctorAppointments"),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

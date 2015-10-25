@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse_lazy
 from .forms import RegistrationForm, LoginForm, PatientForm, PatientHealthConditionsForm, TempPatientDataForm
 from django.template import RequestContext
 from django.views.generic import ListView
-from .models import PermissionsRole, Patient, PatientHealthConditions, TempPatientData, Alert,PatientAppt
+from .models import PermissionsRole, Patient, PatientHealthConditions, TempPatientData, Alert,PatientAppt, Doctor
 from django.shortcuts import render_to_response
 from .forms import PatientApptForm
 from django.template import RequestContext
@@ -308,13 +308,20 @@ def PatientPortalView(request):
 		med_conditions =""
 
 
-
 	alerts_count = Alert.objects.all().count()
 
-	print str(total_health_condition_level) + " is the current HC level."
+	doc_name = ''
+	appts = ''
+	if (permissionRoleForUser.role == 'doctor'):
 
-	print str(alert_sent) + 'is the current sent alert'
+		doc_obj = Doctor.objects.filter(doctor_user=request.user).get()
 
+		doc_name = doc_obj.doctor_first_name + ' ' + doc_obj.doctor_last_name
+
+		appts = PatientAppt.objects.filter(doctor=doc_obj, resolved=0).count()
+
+		if appts == 0:
+			appts = 'No Appointments'
 
 	context = {
 
@@ -329,7 +336,9 @@ def PatientPortalView(request):
 		'allergens': allergens,
 		'med_conditions':med_conditions,
 		'alert_sent':alert_sent,
-		'alerts_count':alerts_count
+		'alerts_count':alerts_count,
+		'doc_name' : doc_name,
+		'appts' : appts
 	}
 
 	return render(request, 'portal.html', context)
@@ -386,7 +395,6 @@ def HealthConditionsView(request):
 			form = PatientHealthConditionsForm(instance=instance)
 			data_exists = True
 			
-
 	if request.method == "POST":
 
 		if conditions_model.objects.filter(user=patient)[:1].exists():
@@ -540,6 +548,7 @@ def UpdateAccountView(request):
 	title = "Update Account Information"
 	form = TempPatientDataForm(request.POST or None)
 	patient_model = Patient
+
 
 	patient = patient_model.objects.filter(user=request.user)[:1].get()
 
@@ -708,10 +717,53 @@ def GenerateStatsView(request):
 		'age_4' : age_4,
 		'unresolved_cases' : unresolved_cases,
 		'resolved_cases' : resolved_cases
+	}
 
+	return render(request, 'stats.html', context)
+
+def PatientDataView(request):
+
+	#get permissions of current user
+	roles = PermissionsRole.objects.filter(user=request.user)[:1].get()
+	patients = ''
+
+	if roles.role == 'doctor':
+		current_doctor = Doctor.objects.filter(doctor_user=request.user)
+		patients = PatientAppt.objects.filter(doctor=current_doctor).all()
+		if PatientAppt.objects.filter(doctor=current_doctor).count() == 0:
+			patients = 0
+		else:
+			print patients
+
+	context = {
+
+		'roles' : roles,
+		'patients' : patients
 
 	}
-	return render(request, 'stats.html', context)
+
+	return render(request, 'view_patients.html', context)
+
+def ScheduledDoctorAppointments(request):
+
+	current_doctor = ''
+	relevant_appts = ''
+	roles 		   = ''
+
+	if (Doctor.objects.filter(doctor_user = request.user).exists()):
+		current_doctor = Doctor.objects.filter(doctor_user = request.user).get()
+		relevant_appts = PatientAppt.objects.filter(doctor = current_doctor)
+		roles = PermissionsRole.objects.filter(user__username=request.user.username)[:1].get()
+
+
+	context = {
+
+		'current_doctor' : current_doctor,
+		'relevant_appts' : relevant_appts,
+		'roles'          : roles
+	}
+
+	return render(request, 'doctor_scheduled_appointments.html', context)
 
 def logout_user(request):
 	logout(request)

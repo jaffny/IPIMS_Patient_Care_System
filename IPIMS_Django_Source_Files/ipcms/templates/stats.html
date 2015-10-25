@@ -1,17 +1,6 @@
 {% extends '_layouts/base.html' %}
 {% load crispy_forms_tags %}
 
-<!-- 
-	context = {
-
-	'roles' : roles,
-	'num_males' : num_males,
-	'num_females' : num_females,
-	'num_other' : num_other,
-	'num_PNTS' : num_PNTS,
-	'total_patients' : total_patients
-
-	} -->
 {% block extension %}
 
 <script type = "text/javascript">
@@ -192,6 +181,13 @@
     var cases2 = new Chart(ctx6).Doughnut(case_data);
 });
 
+
+function printDiv() {
+
+	window.print();
+}
+
+
 </script>
 
 
@@ -200,12 +196,15 @@
 
 {% block content %}
 
+<br><br>
+<a class="btn btn-blue" onclick="printDiv()">Print Statistics Report</a>
 <hr>
 
-
 {% if user.is_authenticated and not roles.role == "patient" %}
+
+<div id="printableArea">
 <center><h1>Patient Statistical Report Analysis</h1></center><hr>
-<div class="row">
+<div class="row" id = 'printer'>
   <div class="col-md-3">
   	<center>
 	  	<h4>Gender Breakdown</h4><hr>
@@ -319,7 +318,7 @@
   </div>
 
 </div>
-
+</div>
 
 
 {% endif %}
