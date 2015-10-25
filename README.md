@@ -21,6 +21,18 @@ the needs of a basic private clinic. The various features can be found below
 
 In order to login to the admin panel, you need to navigate to http://localhost:8000/admin. The login can be create by opening your terminal to the project directory and typing in python createsuperuser.
 
+<br>
+
+#Pre-load Fixture Data
+<ol>
+<li>Navigate to directory that the fixtures directory lives inside of</li>
+<li>Type: 'python manage.py loaddata fixtures/113initial_data.json'</li>
+</ol>
+
+Username and Passwords (usernames and passwords are the same)<br>
+<blockquote class="imgur-embed-pub" lang="en" data-id="PBl5Hcl"><a href="//imgur.com/PBl5Hcl">View post on imgur.com</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+
+
 #Group Website For Management
 <a href="http://group.ryan-schachte.com">http://group.ryan-schachte.com</a>
 <br>

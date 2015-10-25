@@ -29,6 +29,7 @@ class Migration(migrations.Migration):
                 ('doctor_first_name', models.CharField(default=b'', max_length=256)),
                 ('doctor_last_name', models.CharField(default=b'', max_length=256)),
                 ('doctor_type', models.CharField(default=b'Select Doctor Type', max_length=256, choices=[(b'Gynecologist', b'Gynecologist'), (b'Neurologist', b'Neurologist'), (b'Therapist', b'Therapist'), (b'Allergist', b'Allergist'), (b'Cardiologist', b'Cardiologist'), (b'Dermatologist', b'Dermatologist'), (b'Oncologist', b'Oncologist'), (b'ENT', b'ENT'), (b'Plastic Surgeon', b'Plastic Surgeon'), (b'Psychiatrist', b'Psychiatrist'), (b'Urologist', b'Urologist'), (b'Podiatrist', b'Podiatrist')])),
+                ('doctor_user', models.OneToOneField(default=b'', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -81,6 +82,7 @@ class Migration(migrations.Migration):
                 ('age', models.IntegerField(default=18)),
                 ('gender', models.CharField(default=b'Select a gender', max_length=256, choices=[(b'male', b'Male'), (b'female', b'Female'), (b'other', b'Other'), (b'prefer not to say', b'Prefer Not To Say')])),
                 ('race', models.CharField(default=b'Other', max_length=256, choices=[(b'white', b'White'), (b'american_indian_alaskan_native', b'American Indian or Alaskan Native'), (b'hawaiian', b'Native Hawaiian or Other Pacific Islander'), (b'black', b'Black or African American'), (b'asian', b'Asian'), (b'other', b'Other')])),
+                ('income', models.CharField(default=b'Prefer Not To Say', max_length=256, choices=[(b'$0-$10,000', b'$0-$10,000'), (b'$10,001-$30,000', b'$10,001-$30,000'), (b'$30,001-$60,000', b'$30,001-$60,000'), (b'$60,001-$85,000', b'$60,001-$85,000'), (b'$85,001-$110,000', b'$85,001-$110,000'), (b'$110,001+', b'$110,001+'), (b'Prefer Not To Say', b'Prefer Not To Say')])),
                 ('phone_number', phonenumber_field.modelfields.PhoneNumberField(default=b'', max_length=128)),
                 ('DOB', models.DateField(default=b'')),
                 ('ssn', models.IntegerField()),
@@ -101,7 +103,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='patientappt',
             name='doctor',
-            field=models.OneToOneField(default=-1, to='ipcms.Doctor'),
+            field=models.ForeignKey(default=-1, to='ipcms.Doctor'),
         ),
         migrations.AddField(
             model_name='patientappt',

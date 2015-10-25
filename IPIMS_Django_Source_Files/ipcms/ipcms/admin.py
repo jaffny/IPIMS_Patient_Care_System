@@ -18,16 +18,19 @@ class PatientHealthConditionsAdmin(admin.ModelAdmin):
 	form = PatientHealthConditionsForm
 
 class TempPatientDataAdmin(admin.ModelAdmin):
-	list_display=('first_name','last_name')
+	list_display=('first_name','last_name', 'gender')
 
 class AlertAdmin(admin.ModelAdmin):
 	list_display=('alert_level', 'alert_patient', 'alert_description')
+
+class PatientAdmin(admin.ModelAdmin):
+	list_display=('user', 'alertSent')
 
 
 admin.site.register(Alert,AlertAdmin)
 admin.site.register(TempPatientData,TempPatientDataAdmin)
 admin.site.register(PatientHealthConditions, PatientHealthConditionsAdmin)
-admin.site.register(Patient)
+admin.site.register(Patient, PatientAdmin)
 admin.site.register(PatientAppt, PatientApptAdmin)
 admin.site.register(PermissionsRole, PermissionsRoleAdmin)
 admin.site.register(Doctor, DoctorAdmin)

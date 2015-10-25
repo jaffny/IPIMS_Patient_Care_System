@@ -602,10 +602,116 @@ def ApptView(request):
 
 		'current_appts_list': current_appts_list,
 		'current_patient': current_patient
-
 	}
 
 	return render(request, 'view_appts.html', context)
+
+def GenerateStatsView(request):
+
+
+	roles = PermissionsRole.objects.filter(user__username=request.user.username)[:1].get()
+
+	#GENDER
+	total_patients = TempPatientData.objects.filter().count()
+
+	num_males = (float(TempPatientData.objects.filter(gender='male').count())/float(total_patients))*100
+	num_females = (float(TempPatientData.objects.filter(gender='female').count())/float(total_patients))*100
+	num_other = (float(TempPatientData.objects.filter(gender='other').count())/float(total_patients))*100
+	num_PNTS = (float(TempPatientData.objects.filter(gender='prefer not to say').count())/float(total_patients))*100
+	num_males = format(num_males, '.2f')
+	num_females = format(num_females, '.2f')
+	num_other = format(num_other, '.2f')
+	num_PNTS = format(num_PNTS, '.2f')
+
+	#RACE
+	num_white = (float(TempPatientData.objects.filter(race='white').count())/float(total_patients))*100
+	num_white = format(num_white, '.2f')
+	num_indian = (float(TempPatientData.objects.filter(race='american_indian_alaskan_native').count())/float(total_patients))*100
+	num_indian = format(num_indian, '.2f')
+	num_hawaiian = (float(TempPatientData.objects.filter(race='hawaiian').count())/float(total_patients))*100
+	num_hawaiian = format(num_hawaiian, '.2f')
+	num_black = (float(TempPatientData.objects.filter(race='black').count())/float(total_patients))*100
+	num_black = format(num_black, '.2f')
+	num_asian = (float(TempPatientData.objects.filter(race='asian').count())/float(total_patients))*100
+	num_asian = format(num_asian, '.2f')
+	num_other_race = (float(TempPatientData.objects.filter(race='other').count())/float(total_patients))*100
+	num_other_race = format(num_other_race, '.2f')
+
+
+	#INCOME
+	num_1 = (float(TempPatientData.objects.filter(income='$0-$10,000').count())/float(total_patients))*100
+	num_1 = format(num_1, '.2f')
+	num_2 = (float(TempPatientData.objects.filter(income='$10,001-$30,000').count())/float(total_patients))*100
+	num_2 = format(num_2, '.2f')
+	num_3 = (float(TempPatientData.objects.filter(income='$30,001-$60,000').count())/float(total_patients))*100
+	num_3 = format(num_3, '.2f')
+	num_4 = (float(TempPatientData.objects.filter(income='$60,001-$85,000').count())/float(total_patients))*100
+	num_4 = format(num_4, '.2f')
+	num_5 = (float(TempPatientData.objects.filter(income='$85,001-$110,000').count())/float(total_patients))*100
+	num_5 = format(num_5, '.2f')
+	num_6 = (float(TempPatientData.objects.filter(income='$110,001+').count())/float(total_patients))*100
+	num_6 = format(num_6, '.2f')
+	num_7 = (float(TempPatientData.objects.filter(income='Prefer Not To Say').count())/float(total_patients))*100
+	num_7 = format(num_7, '.2f')
+
+	#AGE
+	age_1 = (float(TempPatientData.objects.filter(age__range=(0,19)).count())/float(total_patients))*100
+	age_1 = format(age_1, '.2f')
+
+	age_2 = (float(TempPatientData.objects.filter(age__range=(19,45)).count())/float(total_patients))*100
+	age_2 = format(age_2, '.2f')
+
+	age_3 = (float(TempPatientData.objects.filter(age__range=(45,61)).count())/float(total_patients))*100
+	age_3 = format(age_3, '.2f')
+
+	age_4 = (float(TempPatientData.objects.filter(age__range=(61,130)).count())/float(total_patients))*100
+	age_4 = format(age_4, '.2f')
+
+	#HOSPITAL CASES RESOLVED
+	total_cases = PatientAppt.objects.filter().count()
+
+	if (not total_cases == 0):
+
+		resolved_cases = (float(PatientAppt.objects.filter(resolved=1).count())/float(total_cases))*100
+		resolved_cases = format(resolved_cases, '.2f')
+
+		unresolved_cases = (float(PatientAppt.objects.filter(resolved=0).count())/float(total_cases))*100
+		unresolved_cases = format(unresolved_cases, '.2f')
+	else:
+		resolved_cases = 0
+		unresolved_cases = 0
+
+	context = {
+
+		'roles' : roles,
+		'num_males' : num_males,
+		'num_females' : num_females,
+		'num_other' : num_other,
+		'num_PNTS' : num_PNTS,
+		'total_patients' : total_patients,
+		'num_white' : num_white,
+		'num_indian' : num_indian,
+		'num_hawaiian' : num_hawaiian,
+		'num_black' : num_black,
+		'num_asian' : num_asian,
+		'num_other_race' : num_other_race,
+		'num_1' : num_1,
+		'num_2' : num_2,
+		'num_3' : num_3,
+		'num_4' : num_4,
+		'num_5' : num_5,
+		'num_6' : num_6,
+		'num_7' : num_7,
+		'age_1' : age_1,
+		'age_2' : age_2,
+		'age_3' : age_3,
+		'age_4' : age_4,
+		'unresolved_cases' : unresolved_cases,
+		'resolved_cases' : resolved_cases
+
+
+	}
+	return render(request, 'stats.html', context)
 
 def logout_user(request):
 	logout(request)
