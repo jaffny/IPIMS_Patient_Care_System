@@ -608,6 +608,30 @@ def ApptView(request):
 
 	return render(request, 'view_appts.html', context)
 
+<<<<<<< Updated upstream
+=======
+def view_ApptHistory(request):
+
+	current_appts_list = []
+
+	#First you need to get the current patient to associate the patient with the appts
+	current_patient = Patient.objects.filter(user=request.user)[:1].get()
+
+	#Now you need to find all the appts that are associated with the current user who is logged in
+	if (PatientAppt.objects.filter(user=current_patient)[:1].exists()):
+		current_appts = PatientAppt.objects.filter(user=current_patient).all()
+		for appts in current_appts:
+			current_appts_list.append(appts)
+
+	context = {
+
+		'current_appts_list': current_appts_list,
+		'current_patient': current_patient
+
+	}
+
+	return render(request, 'view_ApptHistory.html', context)
+>>>>>>> Stashed changes
 
 def logout_user(request):
 	logout(request)
