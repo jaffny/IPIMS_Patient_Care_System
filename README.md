@@ -23,14 +23,14 @@ In order to login to the admin panel, you need to navigate to http://localhost:8
 
 <br>
 <br><br>
-#Pre-load Fixture Data<br>
+<h1>Pre-load Fixture Data</h1><br>
 <ol>
 <li>Navigate to directory that the fixtures directory lives inside of</li>
 <li>Type: 'python manage.py loaddata fixtures/113initial_data.json'</li>
 </ol>
 
 Username and Passwords (usernames and passwords are the same)<br>
-<blockquote class="imgur-embed-pub" lang="en" data-id="PBl5Hcl"><a href="//imgur.com/PBl5Hcl">View post on imgur.com</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+<blockquote class="imgur-embed-pub" lang="en" data-id="PBl5Hcl"><a href="//imgur.com/PBl5Hcl">View Usernames & Passwords Here</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
 
 
 #Group Website For Management
