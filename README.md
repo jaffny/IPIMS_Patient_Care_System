@@ -22,7 +22,7 @@ the needs of a basic private clinic. The various features can be found below
 In order to login to the admin panel, you need to navigate to http://localhost:8000/admin. The login can be create by opening your terminal to the project directory and typing in python createsuperuser.
 
 <br>
-
+<br><br>
 #Pre-load Fixture Data<br>
 <ol>
 <li>Navigate to directory that the fixtures directory lives inside of</li>
