@@ -23,7 +23,7 @@ In order to login to the admin panel, you need to navigate to http://localhost:8
 
 <br>
 
-#Pre-load Fixture Data
+#Pre-load Fixture Data<br>
 <ol>
 <li>Navigate to directory that the fixtures directory lives inside of</li>
 <li>Type: 'python manage.py loaddata fixtures/113initial_data.json'</li>
