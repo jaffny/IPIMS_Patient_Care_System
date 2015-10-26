@@ -39,6 +39,10 @@ urlpatterns = [
     url(r'^accounts/portal/admin/generate$', GenerateStatsView, name="GenerateStats"),
     url(r'^accounts/portal/admin/view_patients$', PatientDataView, name="PatientDataView"),
     url(r'^accounts/portal/admin/scheduled_appts$', ScheduledDoctorAppointments, name="ScheduledDoctorAppointments"),
+    url(r'^accounts/portal/admin/resolve_patient_case$', ResolvedPatientAjaxView, name="ResolvedPatientAjaxView"),
+    url(r'^accounts/portal/medical_history$', MedicalHistoryView, name="MedicalHistoryView"),
+    url(r'^accounts/portal/prescribe$', PrescribeMedicationView, name="PrescribeMedicationView"),
+    
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

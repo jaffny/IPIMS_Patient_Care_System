@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .forms import *
-from .models import Patient, PatientAppt, PermissionsRole, Doctor, PatientHealthConditions, TempPatientData, Alert
+from .models import Patient, PatientAppt, PermissionsRole, Doctor, PatientHealthConditions, TempPatientData, Alert, EMedication
 
 
 #Add custom columns to appear inside of the database for the user
@@ -26,6 +26,9 @@ class AlertAdmin(admin.ModelAdmin):
 class PatientAdmin(admin.ModelAdmin):
 	list_display=('user', 'alertSent')
 
+class EMedicationAdmin(admin.ModelAdmin):
+	list_display=('patient', 'medication_name')
+
 
 admin.site.register(Alert,AlertAdmin)
 admin.site.register(TempPatientData,TempPatientDataAdmin)
@@ -34,3 +37,4 @@ admin.site.register(Patient, PatientAdmin)
 admin.site.register(PatientAppt, PatientApptAdmin)
 admin.site.register(PermissionsRole, PermissionsRoleAdmin)
 admin.site.register(Doctor, DoctorAdmin)
+admin.site.register(EMedication, EMedicationAdmin)

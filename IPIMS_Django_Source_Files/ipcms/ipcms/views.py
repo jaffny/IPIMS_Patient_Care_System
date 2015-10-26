@@ -5,10 +5,10 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User 
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse_lazy
-from .forms import RegistrationForm, LoginForm, PatientForm, PatientHealthConditionsForm, TempPatientDataForm
+from .forms import RegistrationForm, LoginForm, PatientForm, PatientHealthConditionsForm, TempPatientDataForm, EMedicationForm
 from django.template import RequestContext
 from django.views.generic import ListView
-from .models import PermissionsRole, Patient, PatientHealthConditions, TempPatientData, Alert,PatientAppt, Doctor
+from .models import PermissionsRole, Patient, PatientHealthConditions, TempPatientData, Alert,PatientAppt, Doctor, EMedication
 from django.shortcuts import render_to_response
 from .forms import PatientApptForm
 from django.template import RequestContext
@@ -23,7 +23,6 @@ STAFF_APPROVAL_ROLES = ('admin', 'doctor', 'staff', 'nurse', 'lab')
 
 def AlertSender(request):
 	#This method should be responsible for sending an alert to the doctor and HSP staff when the patient requests and alert to be sent
-
 
 	print 'inside alert sender'
 	patient_model = Patient.objects.get(user__username=request.user.username)
@@ -312,7 +311,7 @@ def PatientPortalView(request):
 
 	doc_name = ''
 	appts = ''
-	if (permissionRoleForUser.role == 'doctor'):
+	if (not permissionRoleForUser == 'pending' and permissionRoleForUser.role == 'doctor'):
 
 		doc_obj = Doctor.objects.filter(doctor_user=request.user).get()
 
@@ -322,6 +321,12 @@ def PatientPortalView(request):
 
 		if appts == 0:
 			appts = 'No Appointments'
+
+	current_patient = ''
+
+	if (not tempUserInformation == ''):
+		if (Patient.objects.filter(fill_from_application=tempUserInformation).exists()):
+			current_patient = Patient.objects.filter(fill_from_application=tempUserInformation).get()
 
 	context = {
 
@@ -338,7 +343,8 @@ def PatientPortalView(request):
 		'alert_sent':alert_sent,
 		'alerts_count':alerts_count,
 		'doc_name' : doc_name,
-		'appts' : appts
+		'appts' : appts,
+		'current_patient' : current_patient
 	}
 
 	return render(request, 'portal.html', context)
@@ -764,6 +770,136 @@ def ScheduledDoctorAppointments(request):
 	}
 
 	return render(request, 'doctor_scheduled_appointments.html', context)
+
+def ResolvedPatientAjaxView(request):
+
+	current_appt_num = ''
+	current_appt = ''
+
+	if request.is_ajax() or request.method == 'POST':
+
+		primary_key_val = request.POST.get('appt_id')
+		print primary_key_val
+
+		if PatientAppt.objects.filter(pk=primary_key_val).exists():
+			current_appt = PatientAppt.objects.filter(pk=primary_key_val).get()
+
+			if (current_appt.resolved == 0):
+				current_appt.resolved = 1
+				current_appt.save()
+				current_appt_num = current_appt.resolved
+
+			elif (current_appt.resolved == 1):
+				current_appt.resolved = 0
+				current_appt.save()
+				current_appt_num = current_appt.resolved
+
+	current_doctor = ''
+	relevant_appts = ''
+	roles 		   = ''
+
+	if (Doctor.objects.filter(doctor_user = request.user).exists()):
+		current_doctor = Doctor.objects.filter(doctor_user = request.user).get()
+		relevant_appts = PatientAppt.objects.filter(doctor = current_doctor)
+		roles = PermissionsRole.objects.filter(user__username=request.user.username)[:1].get()
+
+	context = {
+
+		'current_doctor' : current_doctor,
+		'relevant_appts' : relevant_appts,
+		'roles'          : roles,
+		'current_appt'   : current_appt,
+		'current_appt_num' : current_appt_num
+	}
+
+	return HttpResponseRedirect(reverse("ScheduledDoctorAppointments"))
+
+def MedicalHistoryView(request):
+
+	if request.method == "POST" and 'pk_patient' in request.POST:
+
+		patient_primary_key = request.POST.get('pk_patient', '')
+
+		patient_appts = PatientAppt.objects.filter(pk=patient_primary_key).all()
+
+		patient_obj = patient_appts[0].user
+
+		patient_appts = PatientAppt.objects.filter(user=patient_obj).all()
+
+		allergies = patient_obj.fill_from_application.allergies
+		medications = patient_obj.fill_from_application.medications
+
+		allergies = allergies.split(',')
+		medications = medications.split(',')
+
+		context = {
+
+			'appts' : patient_appts,
+			'patient' : patient_obj,
+			'temp_user_data' : patient_obj.fill_from_application,
+			'allergies' : allergies,
+			'medications' : medications
+		}
+
+	elif request.method == "POST" and 'pk_patient2' in request.POST:
+
+		patient_primary_key = request.POST.get('pk_patient2', '')
+		print patient_primary_key
+
+		# current_patient = Patient.objects.filter(user_id=patient_primary_key).get()
+
+		if (Patient.objects.filter(id=patient_primary_key).exists()):
+			print 'EXISTS'
+			current_patient = Patient.objects.filter(id=patient_primary_key).get()
+			print 'assigned based on user key'
+		elif (Patient.objects.filter(pk=patient_primary_key).exists()):
+			current_patient = Patient.objects.filter(pk=patient_primary_key).get()
+			print 'assigned based on primary key'
+
+		patient_appts = PatientAppt.objects.filter(user=current_patient).all()
+
+		patient_obj = current_patient
+
+		patient_appts = PatientAppt.objects.filter(user=patient_obj).all()
+
+		allergies = patient_obj.fill_from_application.allergies
+		medications = patient_obj.fill_from_application.medications
+
+		allergies = allergies.split(',')
+		medications = medications.split(',')
+
+
+		context = {
+
+			'appts' : patient_appts,
+			'patient' : patient_obj,
+			'temp_user_data' : patient_obj.fill_from_application,
+			'allergies' : allergies,
+			'medications' : medications,
+		}
+
+
+	return render(request, 'med_history.html', context)
+
+def PrescribeMedicationView(request):
+
+	title = "E-Medication Prescribe Form"
+	form = EMedicationForm(request.POST or None)
+
+	if form.is_valid():
+		instance = form.save(commit=False)
+
+		instance.save()
+		return HttpResponseRedirect('formsuccess')
+
+
+
+	context = {
+		"form": form,
+		"template_title": title,
+	}
+	return render(request, 'prescribe.html', context)
+
 
 def logout_user(request):
 	logout(request)

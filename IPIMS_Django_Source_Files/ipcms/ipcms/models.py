@@ -75,7 +75,6 @@ class PatientHealthConditions(models.Model):
                                        MaxValueValidator(10)], default=0)
 	chest_pain_level = models.IntegerField(validators=[MinValueValidator(0),
                                        MaxValueValidator(10)], default=0)
-
 	def __unicode__(self):
 		return str(self.user.user.username)
 
@@ -94,11 +93,12 @@ class PatientAppt(models.Model):
 	def __unicode__(self):
 		return str(self.doctor)
 
-
 #Class that is responsible for housing all of the alerts that are submitted by the user
 class Alert(models.Model):
 	alert_level = models.IntegerField(default=0, null=False)
 	alert_patient = models.OneToOneField(Patient, unique = True, null = True)
 	alert_description = models.CharField(max_length=255, default="", null = True, unique=False)
 
-
+class EMedication(models.Model):
+	patient = models.OneToOneField(Patient, null=False, default='', blank=False)
+	medication_name = models.CharField(max_length=255, default = '', blank=False, null=False)

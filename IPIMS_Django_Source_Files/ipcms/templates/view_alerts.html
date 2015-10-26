@@ -1,28 +1,38 @@
-
 {% extends '_layouts/base.html' %}
 {% load staticfiles %}
 {% load static %}
+
+{% block extension %} <link href="{% static 'css/displaybox.css' %}" rel="stylesheet">{% endblock %}
 {% block content %}
 
 <center><h1>Emergency Alerts Page</h1></center>
 
 {% if user.is_authenticated and roles.role == "doctor" or roles.role == "hsp" %}
+	<h4><b>{{alerts_count}} Emergency Alert(s)!</b></h4>
+	<hr>
+	<div class="row">
+		{% for alert in alerts %}
+			<div class="col-md-12">
+				<div class="box4" id = "pullleft2">
+					<h3 style="color:#FF6666">EMERGENCY CARD</h3><hr color="red">
+				  	{{alert.alert_patient.user.username|title}} has an alert level of {{alert.alert_level}}!
+				  	<hr>
+				  	Description: {{alert.alert_description}}
+				  	<hr>
+				  	<a href="#">Click To View Patient Case</a>
+				  	<hr>
 
-<h4><b>{{alerts_count}} Emergency Alert(s)!</b></h4>
-<hr>
-{% for alert in alerts %}
-
-	<!-- <h4><i>{{alert.alert_patient.user.username|title}} has an alert level of {{alert.alert_level}}!</i></h4> -->
-
-<div class="alert alert-danger">
-
-  {{alert.alert_patient.user.username|title}} has an alert level of {{alert.alert_level}}!<br>
-  Description: {{alert.alert_description}}
-   <br><a href="#">Click To View Patient Case</a><br>
-</div>
+					    <form id ="checker{{appts.pk}}" method = "POST" action='/accounts/portal/admin/resolve_patient_case'>
+					    {% csrf_token %}
+						<input type="submit" class="resolver" value="Remove Alert"><i class="icon-chevron-right"></i></a>
+							<input type="hidden" name="appt_id" value={{appts.pk}}>
+						</form>
 
 
-{% endfor %}
+				</div>
+			</div>
+		{% endfor %}
+	</div>
 
 {% endif %}
 

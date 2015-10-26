@@ -21,10 +21,10 @@
 
 {% else %}
 <center>
-	{% for patient in patients %}
 	<div class="row">
- 	<div class = 'col-md-2'></div>
-	  <div class = 'col-md-8'>
+	{% for patient in patients %}
+	
+	  <div class = 'col-md-4'>
 			<div class="alert alert-info">
 			    <h3>{{patient.user.fill_from_application.first_name|title}} {{patient.user.fill_from_application.last_name|title}}</h3>
 
@@ -35,11 +35,11 @@
 			       	<button type="submit" onclick="return confirm('Confirm Page Leave?')">Edit Patient Info</button>
 			       </form>
 			    <hr>			       
-			    <form action = "/accounts/portal/update_account/" method="POST">
-			       	{% csrf_token %}
-			       	<input type="hidden" name="pk" value="{{patient.id}}">
-			       	<button type="submit" onclick="return confirm('Confirm Page Leave?')">View Patient Appointments</button>
-			       </form>
+		         <form method ="POST" action='/accounts/portal/medical_history'>
+		         	{% csrf_token %}
+		         	<input type="submit" class="btn-sm" value="View Medical History"> 
+		         	<input type="hidden" name="pk_patient2" value="{{patient.user.id}}">
+		         </form>
 			    <hr>
 			       <form action = "/accounts/portal/update_account/" method="POST">
 			       	{% csrf_token %}
@@ -54,8 +54,7 @@
 			       </form>
 			</div>
 	  </div>
-	<div class = 'col-md-2'></div>
-	</div>
+
 	{% endfor %}
 </center>
 
