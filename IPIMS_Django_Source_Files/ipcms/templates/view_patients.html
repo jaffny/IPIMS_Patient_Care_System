@@ -34,7 +34,7 @@
 			       	<input type="hidden" name="pk" value="{{patient.id}}">
 			       	<button type="submit" onclick="return confirm('Confirm Page Leave?')">Edit Patient Info</button>
 			       </form>
-			    <hr>			       
+			    <hr>
 			    <form action = "/accounts/portal/update_account/" method="POST">
 			       	{% csrf_token %}
 			       	<input type="hidden" name="pk" value="{{patient.id}}">

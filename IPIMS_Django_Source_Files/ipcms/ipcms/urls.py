@@ -39,6 +39,6 @@ urlpatterns = [
     url(r'^accounts/portal/admin/generate$', GenerateStatsView, name="GenerateStats"),
     url(r'^accounts/portal/admin/view_patients$', PatientDataView, name="PatientDataView"),
     url(r'^accounts/portal/admin/scheduled_appts$', ScheduledDoctorAppointments, name="ScheduledDoctorAppointments"),
+    url(r'^delete/(?P<pk>\d+)$', appt_delete, name='delete'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-

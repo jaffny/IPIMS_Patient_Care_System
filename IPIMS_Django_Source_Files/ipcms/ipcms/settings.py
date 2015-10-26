@@ -107,11 +107,11 @@ FIXTURE_DIRS = (
 
 WHOOSH_INDEX = os.path.join(BASE_DIR, 'whoosh/')
 
-STATICFILES_DIRS = (                                                                 
-  os.path.join(BASE_DIR, 'static/'),                                                              
-)                                                                                                                                                                 
+STATICFILES_DIRS = (
+  os.path.join(BASE_DIR, 'static/'),
+)
 
-STATIC_URL = '/static/'                                                             
-STATIC_ROOT = '../ipcms/static_data/' 
+STATIC_URL = '/static/'
+STATIC_ROOT = '../ipcms/static_data/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
