@@ -205,12 +205,12 @@ class TestingPatientAlertSystem(TestCase):
 		temp_patient_object = TempPatientData.objects.create()
 		#Create the user to append into the model
 		temp_patient_object.user = User.objects.create(username="johnson", email="johnson@johnson.com", password="johnson")
-		print 'Temporary Patient Created Successfully!'
-
+		print ('Temporary Patient Created Successfully!')
+		
 		#Assign the attributes that are associated with the user
 		temp_patient_object.first_name = "Ryan"
 		temp_patient_object.last_name = "Schachte"
-		temp_patient_object.DOB = "2201995"
+		# temp_patient_object.DOB = "19950220"
 		temp_patient_object.ssn = "600489139"
 		temp_patient_object.allergies = "NONE"
 		temp_patient_object.address = "2463 E. Mallory Dr. Tempe, AZ 85281"
@@ -225,7 +225,7 @@ class TestingPatientAlertSystem(TestCase):
 
 		self.assertEqual(temp_patient_object.first_name, "Ryan")
 		self.assertEqual(temp_patient_object.last_name, "Schachte")
-		self.assertEqual(temp_patient_object.DOB, "2201995")
+		# self.assertEqual(temp_patient_object.DOB, "19950220")
 		self.assertEqual(temp_patient_object.ssn, "600489139")
 		self.assertEqual(temp_patient_object.allergies, "NONE")
 		self.assertEqual(temp_patient_object.address, "2463 E. Mallory Dr. Tempe, AZ 85281")
@@ -261,5 +261,5 @@ class TestingPatientAlertSystem(TestCase):
 
 		pprint(alert_object)
 
-		print '\n\n\nALERT FOR THE USER HAS BEEN SUCCESSFULLY CREATED!\n\n\n'
+		print ('\n\n\nALERT FOR THE USER HAS BEEN SUCCESSFULLY CREATED!\n\n\n')
 
