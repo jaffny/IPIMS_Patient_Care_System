@@ -3,7 +3,7 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+from datetime import datetime
 
 #This class will also contain the list of names of the doctors who work for the hospital
 class Doctor(models.Model):
@@ -32,14 +32,14 @@ class TempPatientData(models.Model):
 	age = models.IntegerField(default = 18, blank=False)
 	gender = models.CharField(max_length=256, choices=[('male','Male'), ('female', 'Female'), ('other', 'Other'), ('prefer not to say', 'Prefer Not To Say')], default='Select a gender', blank = False)
 	race = models.CharField(max_length=256, choices=[('white', 'White'), ('american_indian_alaskan_native', 'American Indian or Alaskan Native'),('hawaiian', 'Native Hawaiian or Other Pacific Islander'),('black', 'Black or African American'),('asian', 'Asian'), ('other', 'Other')], default="Other")
-	phone_number = PhoneNumberField(blank = False, default="")
-	DOB = models.DateField(auto_now=False, auto_now_add=False, default="")
-	ssn = models.IntegerField(blank=False)
+	phone_number = PhoneNumberField(blank = True, default="")
+	DOB = models.DateField(auto_now=False, auto_now_add=False, default= datetime.now())
+	ssn = models.IntegerField(blank=True, default="600489139")
 	allergies = models.CharField(max_length=256, default="")
 	address = models.CharField(max_length=256, default="")
 	medications = models.CharField(max_length=256, default="")
 	insurance_provider =models.CharField(max_length=256, blank=False)
-	insurance_policy_number = models.IntegerField(blank=False)
+	insurance_policy_number = models.IntegerField(blank=True, default="19938343434")
 	data_sent = models.IntegerField(default=0)
 
 
@@ -84,7 +84,7 @@ class PatientAppt(models.Model):
 	date = models.CharField(max_length=1000, unique=True)
 	doctor = models.ForeignKey(Doctor, unique=False, default=-1)
 	pain_level = models.IntegerField(validators=[MinValueValidator(0),
-                                       MaxValueValidator(10)], blank=False)
+                                       MaxValueValidator(10)], blank=True, default= 0)
 	medical_conditions = models.CharField(max_length=1000, default="None")
 	allergies = models.CharField(max_length=1000, default="None")
 	user = models.ForeignKey(Patient, unique=False, blank=True, default="")
