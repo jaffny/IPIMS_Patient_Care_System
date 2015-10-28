@@ -5,25 +5,6 @@ from datetime import datetime
 from ipcms.models import TempPatientData, Doctor, Patient, PatientHealthConditions, PatientAppt, Alert
 from pprint import pprint
 
-# class PatientHealthTest(TestCase):
-# 	def testHealthCondition(self):
-
-# 		HC = PatientHealthConditions.objects.create()
-# 		HC.user = 1
-# 		HC.nausea_level = 5
-# 		HC.hunger_level = 7
-# 		HC.anxiety_level = 3
-# 		HC.stomach_level = 1
-# 		HC.body_ache_level = 4
-# 		HC.chest_pain_level = 9
-
-# 		self.assertEqual(HC.user, 1)
-# 		self.assertEqual(HC.nausea_level, 5)
-# 		self.assertEqual(HC.hunger_level, 7)
-# 		self.assertEqual(HC.anxiety_level, 3)
-# 		self.assertEqual(HC.stomach_level, 1)
-# 		self.assertEqual(HC.body_ache_level, 4)
-# 		self.assertEqual(HC.chest_pain_level, 9)
 
 
 class TestingPatientApointment(TestCase):
@@ -38,8 +19,7 @@ class TestingPatientApointment(TestCase):
 		# #Assign the attributes that are associated wi+th the user
 		temp_patient_object.first_name = "Po-Kai"
 		temp_patient_object.last_name = "Huang"
-		temp_patient_object.age = 23
-		# temp_patient_object.phone_number = "+114804460455"
+		temp_patient_object.age = 23	
 		temp_patient_object.DOB = "1990-11-20"
 		temp_patient_object.ssn = 123456789
 		temp_patient_object.allergies = "peanut"
@@ -56,7 +36,6 @@ class TestingPatientApointment(TestCase):
 		self.assertEqual(temp_patient_object.first_name, "Po-Kai")
 		self.assertEqual(temp_patient_object.last_name, "Huang")
 		self.assertEqual(temp_patient_object.age, 23)
-		# self.assertEqual(temp_patient_object.phone_number, "+114804460455")
 		self.assertEqual(temp_patient_object.DOB, "1990-11-20")
 		self.assertEqual(temp_patient_object.ssn, 123456789)
 		self.assertEqual(temp_patient_object.allergies, "peanut")
@@ -107,6 +86,25 @@ class TestingPatientApointment(TestCase):
 
 		print ('\n\n\nTestPatientAppt FOR THE USER HAS BEEN SUCCESSFULLY CREATED!\n\n\n')
 
+# class PatientHealthTest(TestCase):
+# 	def testHealthCondition(self):
+
+# 		HC = PatientHealthConditions.objects.create()
+# 		HC.user = 1
+# 		HC.nausea_level = 5
+# 		HC.hunger_level = 7
+# 		HC.anxiety_level = 3
+# 		HC.stomach_level = 1
+# 		HC.body_ache_level = 4
+# 		HC.chest_pain_level = 9
+
+# 		self.assertEqual(HC.user, 1)
+# 		self.assertEqual(HC.nausea_level, 5)
+# 		self.assertEqual(HC.hunger_level, 7)
+# 		self.assertEqual(HC.anxiety_level, 3)
+# 		self.assertEqual(HC.stomach_level, 1)
+# 		self.assertEqual(HC.body_ache_level, 4)
+# 		self.assertEqual(HC.chest_pain_level, 9)
 # #This will be used to prepare the creation of the users within the system
 # class TestingDifferentUserCreations(TestCase):
 
